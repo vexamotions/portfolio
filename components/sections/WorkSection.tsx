@@ -13,27 +13,32 @@ const SECTIONS = [
         id: "3d-designing",
         title: "3D Designing",
         eyebrow: "Immersive • Materials • Lighting",
-        kicker: "We craft atmospheres and mood with realistic lighting, shadows, and cinematic composition.",
-        video: "/videos/test.mp4",
+        kicker:
+            "We craft atmospheres and mood with realistic lighting, shadows, and cinematic composition.",
+        video: "/videos/portfolio/3d-work.mp4", // your 3D work video
         layout: "text-left",
+    },
+    {
+        id: "2d-designing",
+        title: "2D Designing",
+        eyebrow: "Creativity • Layout • Visuals",
+        kicker:
+            "Bringing ideas to life with stunning 2D compositions, balance, and artistic precision.",
+        video: "/videos/portfolio/2d-work.mp4", // your 2D work video
+        layout: "text-right",
     },
     {
         id: "model-designing",
         title: "Model Designing",
         eyebrow: "Topology • Detail • Precision",
-        kicker: "Clean meshes and striking silhouettes built for performance and visual fidelity.",
-        video: "/videos/test.mp4",
-        layout: "text-right",
-    },
-    {
-        id: "video-editing",
-        title: "Video Editing",
-        eyebrow: "Rhythm • Story • Emotion",
-        kicker: "Pacing, transitions, and sound design come together to tell a compelling story.",
-        video: "/videos/test.mp4",
+        kicker:
+            "Clean meshes and striking silhouettes built for performance and visual fidelity.",
+        video: "/videos/portfolio/modeling.mp4", // your modeling video
         layout: "text-left",
     },
-] as const
+
+] as const;
+
 
 export default function Work() {
     return (
