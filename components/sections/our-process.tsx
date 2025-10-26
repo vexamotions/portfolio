@@ -1,6 +1,8 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { Search, PenTool, Code2, Send } from "lucide-react"
 import gsap from "gsap"
 import { ProcessCard } from "../process-card"
@@ -38,8 +40,9 @@ export function OurProcess() {
     const mobileContainerRef = useRef(null)
     const cardRefs = useRef([])
     const [currentCard, setCurrentCard] = useState(0)
-    const scrollTimeoutRef = useRef(null)
-    const lastScrollY = useRef(0)
+    const [hasDropped, setHasDropped] = useState(false)
+    const [touchStart, setTouchStart] = useState(null)
+    const [touchEnd, setTouchEnd] = useState(null)
 
     useEffect(() => {
         // Header animation
@@ -92,43 +95,59 @@ export function OurProcess() {
     }, [])
 
     useEffect(() => {
-        if (window.innerWidth >= 1024) return
+        // Mobile: Trigger drop animation on first view
+        if (window.innerWidth < 1024 && !hasDropped) {
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            setHasDropped(true)
+                            observer.unobserve(entry.target)
+                        }
+                    })
+                },
+                { threshold: 0.3 }
+            )
 
-        const handleScroll = (e) => {
-            e.preventDefault()
-
-            clearTimeout(scrollTimeoutRef.current)
-
-            const currentScrollY = window.scrollY
-            const scrollingDown = currentScrollY > lastScrollY.current
-            lastScrollY.current = currentScrollY
-
-            scrollTimeoutRef.current = setTimeout(() => {
-                if (scrollingDown && currentCard < processSteps.length - 1) {
-                    setCurrentCard(prev => prev + 1)
-                } else if (!scrollingDown && currentCard > 0) {
-                    setCurrentCard(prev => prev - 1)
-                }
-            }, 100)
-        }
-
-        const mobileContainer = mobileContainerRef.current
-        if (mobileContainer) {
-            mobileContainer.addEventListener('wheel', handleScroll, { passive: false })
-            mobileContainer.addEventListener('touchmove', handleScroll, { passive: false })
-        }
-
-        return () => {
-            if (mobileContainer) {
-                mobileContainer.removeEventListener('wheel', handleScroll)
-                mobileContainer.removeEventListener('touchmove', handleScroll)
+            if (mobileContainerRef.current) {
+                observer.observe(mobileContainerRef.current)
             }
-            clearTimeout(scrollTimeoutRef.current)
-        }
-    }, [currentCard])
 
-    const handleDotClick = (index) => {
-        setCurrentCard(index)
+            return () => observer.disconnect()
+        }
+    }, [hasDropped])
+
+    const nextSlide = () => {
+        setCurrentCard((prev) => (prev + 1) % processSteps.length)
+    }
+
+    const prevSlide = () => {
+        setCurrentCard((prev) => (prev - 1 + processSteps.length) % processSteps.length)
+    }
+
+    // Swipe detection
+    const minSwipeDistance = 50
+
+    const onTouchStart = (e) => {
+        setTouchEnd(null)
+        setTouchStart(e.targetTouches[0].clientX)
+    }
+
+    const onTouchMove = (e) => {
+        setTouchEnd(e.targetTouches[0].clientX)
+    }
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return
+        const distance = touchStart - touchEnd
+        const isLeftSwipe = distance > minSwipeDistance
+        const isRightSwipe = distance < -minSwipeDistance
+        if (isLeftSwipe) {
+            nextSlide()
+        }
+        if (isRightSwipe) {
+            prevSlide()
+        }
     }
 
     return (
@@ -159,44 +178,65 @@ export function OurProcess() {
                 ))}
             </div>
 
-            {/* Mobile View - Card Drop Effect */}
+            {/* Mobile View - Card Drop then Swipe */}
             <div
                 ref={mobileContainerRef}
                 className="lg:hidden w-full max-w-md relative"
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEnd}
             >
-                <div className="relative h-[400px] perspective-1000">
+                <div className="relative h-[450px] perspective-1000">
                     {processSteps.map((step, index) => {
                         const isActive = index === currentCard
-                        const isPast = index < currentCard
-                        const isFuture = index > currentCard
+                        const isPrev = index === (currentCard - 1 + processSteps.length) % processSteps.length
+                        const isNext = index === (currentCard + 1) % processSteps.length
 
                         let transform = ''
                         let opacity = 0
                         let zIndex = 0
+                        let delay = 0
 
-                        if (isActive) {
-                            transform = 'translateY(0) translateZ(0) rotateX(0deg) scale(1)'
-                            opacity = 1
-                            zIndex = 30
-                        } else if (isPast) {
-                            transform = 'translateY(-150%) translateZ(-200px) rotateX(20deg) scale(0.85)'
+                        // Initial drop animation
+                        if (!hasDropped) {
+                            transform = 'translateY(-200%) rotateX(-25deg) scale(0.8)'
                             opacity = 0
-                            zIndex = 10
-                        } else if (isFuture) {
-                            transform = 'translateY(150%) translateZ(-200px) rotateX(-20deg) scale(0.85)'
-                            opacity = 0.3
-                            zIndex = 20
+                            delay = index * 150 // Stagger delay
+                        }
+                        // After drop, card stack behavior
+                        else {
+                            if (isActive) {
+                                transform = 'translateY(0) translateZ(0) rotateX(0deg) scale(1)'
+                                opacity = 1
+                                zIndex = 30
+                            } else if (isNext) {
+                                transform = 'translateY(20px) translateZ(-100px) scale(0.92)'
+                                opacity = 0.5
+                                zIndex = 20
+                            } else if (isPrev) {
+                                transform = 'translateY(40px) translateZ(-150px) scale(0.88)'
+                                opacity = 0.3
+                                zIndex = 10
+                            } else {
+                                transform = 'translateY(60px) translateZ(-200px) scale(0.85)'
+                                opacity = 0
+                                zIndex = 0
+                            }
                         }
 
                         return (
                             <div
                                 key={step.title}
-                                className="absolute inset-0 transition-all duration-700 ease-out"
+                                className="absolute inset-0 ease-out"
                                 style={{
                                     transform,
-                                    opacity,
+                                    opacity: hasDropped ? opacity : 0,
                                     zIndex,
                                     transformStyle: 'preserve-3d',
+                                    transition: hasDropped
+                                        ? 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                                        : `all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}ms`,
+                                    pointerEvents: isActive ? 'auto' : 'none',
                                 }}
                             >
                                 <div className="w-full h-full bg-gradient-to-br from-card via-card to-card/90 rounded-3xl shadow-2xl p-6 flex flex-col items-start justify-between border border-primary/20 backdrop-blur-sm relative overflow-hidden">
@@ -232,7 +272,7 @@ export function OurProcess() {
                                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full animate-shimmer" />
                                     </div>
 
-                                    {isActive && (
+                                    {isActive && hasDropped && (
                                         <>
                                             <div
                                                 className="absolute top-10 right-10 w-2 h-2 bg-primary/30 rounded-full animate-float"
@@ -248,25 +288,48 @@ export function OurProcess() {
                     })}
                 </div>
 
-                {/* Navigation Dots */}
-                <div className="flex items-center justify-center gap-3 mt-8">
-                    {processSteps.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => handleDotClick(index)}
-                            className={`h-2 rounded-full transition-all duration-300 ${index === currentCard
-                                ? "w-8 bg-primary shadow-lg shadow-primary/50"
-                                : "w-2 bg-primary/30 hover:bg-primary/50"
-                                }`}
-                            aria-label={`Go to step ${index + 1}`}
-                        />
-                    ))}
+                {/* Navigation Controls */}
+                <div className="flex items-center justify-center gap-4 mt-8">
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={prevSlide}
+                        disabled={!hasDropped}
+                        className="rounded-full border-primary/30 hover:bg-primary/10 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:scale-110 disabled:opacity-50"
+                    >
+                        <ChevronLeft className="h-5 w-5" />
+                    </Button>
+
+                    <div className="flex gap-2">
+                        {processSteps.map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => hasDropped && setCurrentCard(index)}
+                                disabled={!hasDropped}
+                                className={`h-2 rounded-full transition-all duration-300 ${index === currentCard
+                                    ? "w-8 bg-primary shadow-lg shadow-primary/50"
+                                    : "w-2 bg-primary/30 hover:bg-primary/50"
+                                    }`}
+                                aria-label={`Go to step ${index + 1}`}
+                            />
+                        ))}
+                    </div>
+
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={nextSlide}
+                        disabled={!hasDropped}
+                        className="rounded-full border-primary/30 hover:bg-primary/10 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:scale-110 disabled:opacity-50"
+                    >
+                        <ChevronRight className="h-5 w-5" />
+                    </Button>
                 </div>
 
-                {/* Scroll Hint */}
-                {currentCard < processSteps.length - 1 && (
-                    <div className="text-center mt-6 text-sm text-muted-foreground animate-bounce">
-                        Scroll to see next step ↓
+                {/* Swipe Hint */}
+                {hasDropped && (
+                    <div className="text-center mt-6 text-sm text-muted-foreground">
+                        Swipe or use buttons to navigate
                     </div>
                 )}
             </div>
