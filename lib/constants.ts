@@ -9,14 +9,14 @@ export const SITE_CONFIG = {
   },
 }
 
-export const NAVIGATION = [
+const NAVIGATION = [
   { label: "Home", href: "#home" },
   { label: "Projects", href: "#projects" },
   { label: "Services", href: "#services" },
   { label: "Contact", href: "#contact" },
 ]
 
-export const HERO_CONTENT = {
+const HERO_CONTENT = {
   headline: "Creative Digital",
   subheadline: "Experiences",
   description:
@@ -24,7 +24,7 @@ export const HERO_CONTENT = {
   cta: "View Our Work",
 }
 
-export const SERVICES = [
+const SERVICES = [
   {
     title: "Web Development",
     description: "Custom websites and web applications built with modern technologies",

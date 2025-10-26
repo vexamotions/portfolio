@@ -8,7 +8,7 @@ export const plusJakarta = Plus_Jakarta_Sans({
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
-export const ruderPlakat = localFont({
+const ruderPlakat = localFont({
   src: "../public/fonts/Plakat Bold.woff2",
   variable: "--font-ruder-plakat",
   display: "swap",
