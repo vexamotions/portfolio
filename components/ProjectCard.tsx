@@ -1,6 +1,6 @@
 import { Project } from '@/types/types';
 import React, { useState, useRef, useEffect } from 'react';
-
+import Image from 'next/image';
 
 interface ProjectCardProps {
     project: Project;
@@ -10,6 +10,7 @@ interface ProjectCardProps {
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
     const [isVisible, setIsVisible] = useState<boolean>(false);
+    const [imageLoaded, setImageLoaded] = useState<boolean>(false);
     const videoRef = useRef<HTMLVideoElement>(null);
     const cardRef = useRef<HTMLDivElement>(null);
 
@@ -53,6 +54,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
         }
     };
 
+    const handleImageLoad = (): void => {
+        setImageLoaded(true);
+    };
+
     return (
         <div
             ref={cardRef}
@@ -62,12 +67,18 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
             onMouseLeave={handleMouseLeave}
         >
             <div className="relative overflow-hidden rounded-2xl bg-zinc-900 aspect-video mb-6">
-                <img
-                    src={project.thumbnail}
-                    alt={project.title}
-                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${isHovered ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
-                        }`}
-                />
+                <div className={`absolute inset-0 w-full h-full transition-all duration-700 ${isHovered ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+                    }`}>
+                    <Image
+                        src={project.thumbnail}
+                        alt={project.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover"
+                        onLoad={handleImageLoad}
+                        priority={index < 3} // Prioritize loading first 3 images
+                    />
+                </div>
 
                 <video
                     ref={videoRef}
