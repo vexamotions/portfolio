@@ -5,22 +5,22 @@ const ServicesSection = () => {
     // Define services with images and descriptions
     const services = [
         {
-            image: "https://images.unsplash.com/photo-1618477461853-c0aeee3bd56c?auto=format&fit=crop&w=800&h=600",
+            image: "/videos/work/3d-home-tour-preview.jpg",
             text: "3D Animation",
             subtitle: "Immersive animations for storytelling and branding",
         },
         {
-            image: "https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=800&h=600",
+            image: "/videos/work/character/Astro/2.png",
             text: "Modeling",
             subtitle: "High-quality 3D models for games and visuals",
         },
         {
-            image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&h=600",
+            image: "/videos/work/2d-music-preivew.png",
             text: "2D Animation",
             subtitle: "Dynamic 2D visuals for engaging content",
         },
         {
-            image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&h=600",
+            image: "/videos/work/motion-design-preivew.png",
             text: "Motion Design",
             subtitle: "Fluid motion graphics for ads and media",
         },

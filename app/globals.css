@@ -141,6 +141,8 @@ body {
   font-family: var(--font-plus-jakarta), sans-serif;
   /* font-family: var(--font-ruder-plakat), sans-serif; */
   overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .hero-text {

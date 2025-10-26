@@ -2,6 +2,8 @@
 
 import type React from "react"
 import { useEffect, useRef } from "react"
+// In ScrollProvider.tsx, at the top
+import 'lenis/dist/lenis.css'; // Add this import
 
 export default function ScrollProvider({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<any>(null)

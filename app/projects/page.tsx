@@ -11,46 +11,75 @@ const AllProjects: React.FC = () => {
     const projects: Project[] = [
         {
             id: 1,
-            title: 'Neural Interface',
-            description: 'A revolutionary brain-computer interface designed for seamless human-machine interaction. Built with cutting-edge neuroscience and elegant UX.',
-            thumbnail: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&q=80',
-            video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
+            title: '3D Virtual Tour of Apartment',
+            description: 'A fully interactive 3D virtual tour of a modern apartment, designed to provide an immersive walkthrough experience for potential buyers or renters. This project allows users to explore the apartment in detail from any angle, offering realistic navigation, smooth transitions, and high-quality visuals. Ideal for real estate marketing, it enhances property presentations and helps clients visualize the space remotely.',
+            thumbnail: '/videos/work/3d-home-tour-preview.jpg',
+            video: '/videos/work/3d-home-tour.mp4'
         },
         {
             id: 2,
-            title: 'Quantum Dashboard',
-            description: 'Real-time quantum computing visualization platform. Transforming complex quantum states into intuitive, actionable insights for researchers.',
-            thumbnail: 'https://images.unsplash.com/photo-1639322537228-f710d846310a?w=800&q=80',
-            video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4'
+            title: 'Sagittarius A* Watch Animation',
+            description: 'A high-end, cinematic watch animation designed and rendered in Blender. Inspired by the elegance of space and time, this piece showcases detailed modeling, realistic materials, and smooth motion — perfect for luxury product marketing and brand visuals.',
+            thumbnail: '/videos/work/3d-watch-preview.jpg',
+            video: '/videos/work/3d-watch-animation.mp4'
         },
         {
             id: 3,
-            title: 'Orbital Commerce',
-            description: 'Next-generation e-commerce platform with spatial computing integration. Redefining online shopping through immersive 3D experiences.',
-            thumbnail: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80',
-            video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4'
+            title: 'Smart EV Charger Animation',
+            description: 'This animation brings the EV Smart Charger to life, showing just how easy and smart charging your electric vehicle can be. It highlights the charger\'s sleek design, its smart features, and how it makes the charging process seamless and efficient—perfect for a greener, more connected future.',
+            thumbnail: '/videos/work/3d-ev-charger-preview.png',
+            video: '/videos/work/3d-ev-charger.mp4'
         },
         {
             id: 4,
-            title: 'Biometric Suite',
-            description: 'Advanced identity verification system combining facial recognition, iris scanning, and behavioral biometrics for enterprise security.',
-            thumbnail: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80',
-            video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4'
+            title: 'Smart Remote Control Animation',
+            description: 'A sleek and modern smart remote control animation showcasing intuitive user interface and ergonomic design. This animation demonstrates the remote\'s features, button interactions, and seamless connectivity with smart home devices. Perfect for product launches and marketing campaigns.',
+            thumbnail: '/videos/work/3d-smart-remote-preivew.png',
+            video: '/videos/work/3d-smart-remote.mp4'
         },
         {
             id: 5,
-            title: 'Climate Nexus',
-            description: 'Comprehensive climate data platform aggregating real-time environmental metrics. Empowering decision-makers with predictive analytics.',
-            thumbnail: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80',
-            video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4'
+            title: 'Smart Switches Collection',
+            description: 'A comprehensive animation series featuring modern smart switches for home automation. This collection highlights different switch designs, touch interfaces, and integration with smart home ecosystems. Each animation demonstrates the seamless user experience and elegant aesthetics of next-generation home controls.',
+            thumbnail: '/videos/work/3d-smart-switches-preview.png',
+            video: '/videos/work/3d-smart-switches.mp4'
         },
         {
             id: 6,
-            title: 'Autonomous Fleet',
-            description: 'Fleet management system for self-driving vehicles. Orchestrating thousands of autonomous agents with machine learning optimization.',
-            thumbnail: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&q=80',
-            video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
+            title: '3D Animation Mixture Reel',
+            description: 'A dynamic showcase reel featuring various 3D animation projects including product visualizations, motion graphics, and character animations. This compilation demonstrates versatility in animation styles, technical proficiency, and creative storytelling across different industries and applications.',
+            thumbnail: '/videos/work/3d-mixture-preivew.png',
+            video: '/videos/work/3d-animations-mixture.mp4'
+        },
+        {
+            id: 7,
+            title: 'Robot Landing Sequence',
+            description: 'A cinematic robot landing animation featuring advanced mech design and atmospheric entry effects. This project showcases realistic physics, dynamic lighting, and detailed robotic mechanisms. Perfect for sci-fi productions, game cinematics, or tech product demonstrations.',
+            thumbnail: '/videos/work/3d-robot-preview.png',
+            video: '/videos/work/3d-robot-landing.mp4'
+        },
+        {
+            id: 8,
+            title: '2D Construction Explanation',
+            description: 'An educational 2D animation explaining complex construction processes in an engaging and easy-to-understand manner. Using clear visuals and step-by-step demonstrations, this animation breaks down construction methodologies for training, client presentations, and educational purposes.',
+            thumbnail: '/videos/work/2d-construction-preivew.png',
+            video: '/videos/work/2d-construction-explanation.mp4'
+        },
+        {
+            id: 9,
+            title: '2D Music Video Animation',
+            description: 'A vibrant 2D animated music video combining artistic expression with rhythmic storytelling. This project features custom character designs, fluid motion, and synchronized visual elements that enhance the musical experience. Ideal for artists, bands, and creative marketing campaigns.',
+            thumbnail: '/videos/work/2d-music-preivew.png',
+            video: '/videos/work/2d-copy-of-music-video.mp4'
+        },
+        {
+            id: 10,
+            title: 'Neura Flow - Motion Design Dashboard',
+            description: 'A sleek, futuristic motion design showcase for the Neura Flow dashboard interface. This animation brings to life an advanced analytics dashboard with fluid transitions, dynamic data visualizations, and intuitive user interactions.',
+            thumbnail: '/videos/work/motion-design-preivew.png',
+            video: '/videos/work/motion-design.mp4'
         }
+
     ];
 
     return (
@@ -67,15 +96,6 @@ const AllProjects: React.FC = () => {
                                 <ProjectCard key={project.id} project={project} index={index} />
                             ))}
                         </div>
-
-                        {/* <div className="mt-32 text-center">
-                            <p className="text-zinc-500 text-lg mb-8">
-                                Interested in working together?
-                            </p>
-                            <button className="px-8 py-4 bg-white text-black rounded-full font-semibold text-lg hover:bg-zinc-100 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/20">
-                                Get in Touch
-                            </button>
-                        </div> */}
                     </div>
                 </div>
             </div>

@@ -53,7 +53,7 @@ export default function Work() {
                 return (
                     <section
                         key={s.id}
-                        className="relative flex min-h-screen w-full items-center"
+                        className="relative flex min-h-screen w-full items-center overflow-x-hidden"
                         aria-labelledby={`${s.id}-title`}
                     >
                         <div className="container mx-auto h-screen max-w-[1920px] px-4 md:px-8 lg:px-12">

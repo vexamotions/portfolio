@@ -212,8 +212,8 @@ export default function Navbar() {
                 ref={logoRef}
                 className="text-2xl font-bold tracking-tight"
               >
-                <span className="text-white">NEX</span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">US</span>
+                <span className="text-white">VEXA</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">MOTIONS</span>
               </div>
               <div className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-cyan-400 to-purple-500 group-hover:w-full transition-all duration-300" />
             </a>
