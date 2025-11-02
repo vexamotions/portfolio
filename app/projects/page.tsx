@@ -78,8 +78,21 @@ const AllProjects: React.FC = () => {
             description: 'A sleek, futuristic motion design showcase for the Neura Flow dashboard interface. This animation brings to life an advanced analytics dashboard with fluid transitions, dynamic data visualizations, and intuitive user interactions.',
             thumbnail: '/videos/work/motion-design-preivew.png',
             video: '/videos/work/motion-design.mp4'
+        },
+        {
+            id: 11,
+            title: '3D Character Modeling - Billy',
+            description: 'A showcase of our 3D character modeling process featuring Billy, demonstrating the complete pipeline from concept to final model. This reel highlights our expertise in character design, topology optimization, texture painting, and rigging preparation for animation-ready assets.',
+            thumbnail: '/videos/work/model-preview.png',
+            video: '/videos/portfolio/modeling.mp4'
+        },
+        {
+            id: 12,
+            title: 'Influencer Video Editing Suite',
+            description: 'Professional video editing for social media influencers featuring sharp captions, dynamic transitions, and engaging visual effects. This project demonstrates advanced editing techniques including color grading, motion graphics integration, and rhythm-based cutting to create compelling content that maximizes audience engagement and brand impact.',
+            thumbnail: '/videos/work/video-preview.png',
+            video: '/videos/work/video.mp4'
         }
-
     ];
 
     return (

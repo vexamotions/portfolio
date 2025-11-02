@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -9,10 +7,10 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Mail, Phone, MapPin, Send } from "lucide-react"
 import toast, { Toaster } from "react-hot-toast"
-import ReCAPTCHA from "react-google-recaptcha"
+import HCaptcha from "@hcaptcha/react-hcaptcha"
 
 const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || "YOUR_WEB3FORMS_ACCESS_KEY"
-const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "YOUR_RECAPTCHA_SITE_KEY"
+const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY || "YOUR_HCAPTCHA_SITE_KEY"
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -20,9 +18,11 @@ export default function Contact() {
     email: "",
     subject: "",
     message: "",
+    botcheck: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const recaptchaRef = useRef<ReCAPTCHA>(null)
+  const hcaptchaRef = useRef<any>(null)
+  const [token, setToken] = useState<string | null>(null)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -32,23 +32,24 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Validate all fields
     if (!formData.name.trim() || !formData.email.trim() || !formData.subject.trim() || !formData.message.trim()) {
       toast.error("Please complete all fields and captcha.")
       return
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(formData.email)) {
       toast.error("Please enter a valid email address.")
       return
     }
 
-    // Get reCAPTCHA response
-    const recaptchaValue = recaptchaRef.current?.getValue()
-    if (!recaptchaValue) {
-      toast.error("Please complete all fields and captcha.")
+    if (!token) {
+      toast.error("Please complete the captcha.")
+      return
+    }
+
+    if (formData.botcheck) {
+      toast.error("Spam detected.")
       return
     }
 
@@ -67,6 +68,7 @@ export default function Contact() {
           email: formData.email,
           subject: formData.subject,
           message: formData.message,
+          "h-captcha-response": token, // hCaptcha token for Web3Forms
         }),
       })
 
@@ -74,8 +76,9 @@ export default function Contact() {
 
       if (result.success) {
         toast.success("Message sent successfully!")
-        setFormData({ name: "", email: "", subject: "", message: "" })
-        recaptchaRef.current?.reset()
+        setFormData({ name: "", email: "", subject: "", message: "", botcheck: "" })
+        hcaptchaRef.current?.resetCaptcha()
+        setToken(null)
       } else {
         toast.error("Something went wrong. Please try again.")
       }
@@ -112,7 +115,6 @@ export default function Contact() {
       />
       <section id="contact" className="section-padding bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section Header */}
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Get In <span className="text-primary">Touch</span>
@@ -127,6 +129,17 @@ export default function Contact() {
             <Card className="bg-card border-white/10">
               <CardContent className="p-8">
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Honeypot */}
+                  <input
+                    type="text"
+                    name="botcheck"
+                    value={formData.botcheck}
+                    onChange={handleInputChange}
+                    className="hidden"
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-white mb-2">
@@ -193,9 +206,17 @@ export default function Contact() {
                       placeholder="Tell us about your project..."
                     />
                   </div>
+
+                  {/* hCaptcha */}
                   <div className="flex justify-center">
-                    <ReCAPTCHA ref={recaptchaRef} sitekey={RECAPTCHA_SITE_KEY} theme="dark" />
+                    <HCaptcha
+                      sitekey={HCAPTCHA_SITE_KEY}
+                      onVerify={(token) => setToken(token)}
+                      ref={hcaptchaRef}
+                      theme="dark"
+                    />
                   </div>
+
                   <Button
                     type="submit"
                     size="lg"
@@ -226,8 +247,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h4 className="text-white font-semibold mb-1">Email</h4>
-                    <p className="text-white/70">hello@portfolio.com</p>
-                    <p className="text-white/70">business@portfolio.com</p>
+                    <p className="text-white/70">business@vexamotions.com</p>
                   </div>
                 </div>
 
@@ -237,8 +257,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h4 className="text-white font-semibold mb-1">Phone</h4>
-                    <p className="text-white/70">+1 (555) 123-4567</p>
-                    <p className="text-white/70">+1 (555) 987-6543</p>
+                    <p className="text-white/70">+1 (708) 882-7113</p>
                   </div>
                 </div>
 
@@ -248,8 +267,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h4 className="text-white font-semibold mb-1">Location</h4>
-                    <p className="text-white/70">San Francisco, CA</p>
-                    <p className="text-white/70">Available worldwide</p>
+                    <p className="text-white/70">Shorewood IL, 60404 United States</p>
                   </div>
                 </div>
               </div>

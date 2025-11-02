@@ -30,20 +30,20 @@ const ServicesSection = () => {
             subtitle: "Professional edits for compelling videos",
         },
         {
-            image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&h=600",
+            image: "/images/design.webp",
             text: "Designing",
             subtitle: "Creative designs for branding and marketing",
         },
         {
-            image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&h=600",
+            image: "/images/web-design.jpg",
             text: "Web Designing",
             subtitle: "Stunning UI/UX for modern websites",
         },
-        {
-            image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&h=600",
-            text: "Web Development",
-            subtitle: "Robust, scalable web solutions",
-        },
+        // {
+        //     image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&h=600",
+        //     text: "Web Development",
+        //     subtitle: "Robust, scalable web solutions",
+        // },
     ]
 
     return (

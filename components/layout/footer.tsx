@@ -13,7 +13,7 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-xl font-bold text-white mb-4">{SITE_CONFIG.name}</h3>
             <p className="text-white/60 mb-6 max-w-md">{SITE_CONFIG.description}</p>
-            <div className="flex space-x-4">
+            {/* <div className="flex space-x-4">
               <Link
                 href={SITE_CONFIG.social.twitter}
                 className="text-white/60 hover:text-white transition-colors"
@@ -38,7 +38,7 @@ export default function Footer() {
               <Link href="#" className="text-white/60 hover:text-white transition-colors" aria-label="GitHub">
                 <Github className="h-5 w-5" />
               </Link>
-            </div>
+            </div> */}
           </div>
 
           {/* Quick Links */}
@@ -72,9 +72,9 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4">Get In Touch</h4>
             <ul className="space-y-2 text-sm text-white/60">
-              <li>hello@portfolio.com</li>
-              <li>+1 (555) 123-4567</li>
-              <li>San Francisco, CA</li>
+              <li>business@vexamotion.com</li>
+              <li>+1 (708) 882-7113</li>
+              <li> Shorewood IL, 60404 United States</li>
             </ul>
           </div>
         </div>
