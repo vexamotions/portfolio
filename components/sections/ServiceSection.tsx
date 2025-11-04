@@ -5,46 +5,42 @@ const ServicesSection = () => {
     // Define services with images and descriptions
     const services = [
         {
-            image: "/videos/work/3d-home-tour-preview.jpg",
+            image: "/images/3d-animation.jpg",
             text: "3D Animation",
-            subtitle: "Immersive animations for storytelling and branding",
+            subtitle: "Immersive 3D storytelling for brands and games",
         },
         {
             image: "/videos/work/character/Astro/2.png",
-            text: "Modeling",
-            subtitle: "High-quality 3D models for games and visuals",
+            text: "3D Modeling",
+            subtitle: "High-quality 3D assets for films, games, and visualization",
+        },
+        {
+            image: "/images/web-design.png",
+            text: "Website UI/UX Design",
+            subtitle: "Modern and responsive website designs for impactful user experiences",
         },
         {
             image: "/videos/work/2d-music-preivew.png",
             text: "2D Animation",
-            subtitle: "Dynamic 2D visuals for engaging content",
+            subtitle: "Engaging 2D visuals and explainer animations",
         },
         {
             image: "/videos/work/motion-design-preivew.png",
             text: "Motion Design",
-            subtitle: "Fluid motion graphics for ads and media",
+            subtitle: "Fluid motion graphics for marketing and branding",
         },
         {
-            image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=800&h=600",
+            image: "/images/video-editing.png",
             text: "Video Editing",
-            subtitle: "Professional edits for compelling videos",
+            subtitle: "Professional video edits for storytelling and content creation",
         },
         {
             image: "/images/design.webp",
-            text: "Designing",
-            subtitle: "Creative designs for branding and marketing",
+            text: "Mobile App Design",
+            subtitle: "Beautiful Figma UI designs for iOS and Android apps",
         },
-        {
-            image: "/images/web-design.jpg",
-            text: "Web Designing",
-            subtitle: "Stunning UI/UX for modern websites",
-        },
-        // {
-        //     image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&h=600",
-        //     text: "Web Development",
-        //     subtitle: "Robust, scalable web solutions",
-        // },
-    ]
+    ];
+
 
     return (
         <div id="services" className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">

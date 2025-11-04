@@ -68,7 +68,7 @@ export default function Contact() {
           email: formData.email,
           subject: formData.subject,
           message: formData.message,
-          "h-captcha-response": token, // hCaptcha token for Web3Forms
+          // "h-captcha-response": token, // hCaptcha token for Web3Forms
         }),
       })
 
