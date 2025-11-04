@@ -166,7 +166,7 @@ export function OurProcess() {
             </div>
 
             {/* Desktop View */}
-            <div className="hidden lg:flex relative w-full max-w-7xl h-[600px] lg:h-[700px] items-start justify-center pt-4">
+            <div style={{ willChange: 'transform, opacity' }} className="hidden lg:flex relative w-full max-w-7xl h-[600px] lg:h-[700px] items-start justify-center pt-4">
                 {processSteps.map((step, index) => (
                     <ProcessCard
                         key={step.title}

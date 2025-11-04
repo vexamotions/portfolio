@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { memo, useEffect, useRef } from "react"
 import { type LucideIcon } from "lucide-react"
 import gsap from "gsap"
 import ScrollTrigger from "gsap/ScrollTrigger"
@@ -14,7 +14,12 @@ interface ProcessCardProps {
     index: number
 }
 
-export function ProcessCard({ title, description, icon: Icon, index }: ProcessCardProps) {
+export const ProcessCard = memo(function ProcessCard({
+    title,
+    description,
+    icon: Icon,
+    index
+}: ProcessCardProps) {
     const cardRef = useRef(null)
     const shineRef = useRef(null)
 
@@ -109,4 +114,4 @@ export function ProcessCard({ title, description, icon: Icon, index }: ProcessCa
             </div>
         </div>
     )
-}
+})
