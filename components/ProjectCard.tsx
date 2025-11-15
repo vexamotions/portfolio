@@ -12,6 +12,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+    const [videoLoading, setVideoLoading] = useState<boolean>(false);
     const videoRef = useRef<HTMLVideoElement>(null);
     const cardRef = useRef<HTMLDivElement>(null);
     const hlsRef = useRef<Hls | null>(null);
@@ -25,7 +26,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
 
         if (Hls.isSupported()) {
             const hls = new Hls({
-                autoStartLoad: false, // Don't load until we call startLoad()
+                autoStartLoad: false,
             });
             hls.loadSource(videoSrc);
             hls.attachMedia(video);
@@ -35,7 +36,6 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                 hls.destroy();
             };
         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            // Native HLS support (Safari)
             video.src = videoSrc;
             video.preload = 'none';
         }
@@ -69,21 +69,32 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
 
     const handleMouseEnter = (): void => {
         setIsHovered(true);
+        setVideoLoading(true);
+
         if (videoRef.current) {
-            // Start loading the stream now
             if (hlsRef.current) {
                 hlsRef.current.startLoad();
             }
-            videoRef.current.play().catch(e => console.log('Video play failed:', e));
+
+            videoRef.current.play()
+                .then(() => {
+                    setVideoLoading(false);
+                })
+                .catch(e => {
+                    console.log('Video play failed:', e);
+                    setVideoLoading(false);
+                });
         }
     };
 
     const handleMouseLeave = (): void => {
         setIsHovered(false);
+        setVideoLoading(false);
+
         if (videoRef.current) {
             videoRef.current.pause();
             videoRef.current.currentTime = 0;
-            // Stop loading to save bandwidth
+
             if (hlsRef.current) {
                 hlsRef.current.stopLoad();
             }
@@ -124,6 +135,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                     className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${isHovered ? 'opacity-100 scale-103' : 'opacity-0 scale-100'
                         }`}
                 />
+
+                {/* Loading spinner */}
+                {videoLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                        <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                    </div>
+                )}
 
                 <div
                     className={`absolute inset-0 bg-black transition-opacity duration-500 ${isHovered ? 'opacity-0' : 'opacity-10'
