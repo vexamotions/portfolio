@@ -15,7 +15,7 @@ const ServicesSection = () => {
             subtitle: "High-quality 3D assets for films, games, and visualization",
         },
         {
-            image: "/images/web-design.png",
+            image: "/images/website-ui-updated.jpg",
             text: "Website UI/UX Design",
             subtitle: "Modern and responsive website designs for impactful user experiences",
         },
@@ -30,20 +30,18 @@ const ServicesSection = () => {
             subtitle: "Fluid motion graphics for marketing and branding",
         },
         {
-            image: "/images/video-editing.png",
+            image: "/images/video-editing.jpg",
             text: "Video Editing",
             subtitle: "Professional video edits for storytelling and content creation",
         },
         {
-            image: "/images/design.webp",
+            image: "/images/mobile-app.jpg",
             text: "Mobile App Design",
             subtitle: "Beautiful Figma UI designs for iOS and Android apps",
         },
     ];
-
-
     return (
-        <div id="services" className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+        <div id="services" className="min-h-screen bg-linear-to-br from-background via-background to-muted/20">
             <div className="relative z-10 pt-16 pb-8">
                 <div className="text-center">
                     <h1 className="font-playfair text-6xl md:text-8xl font-bold text-foreground mb-4 tracking-tight">

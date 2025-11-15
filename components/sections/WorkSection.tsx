@@ -15,7 +15,8 @@ const SECTIONS = [
         eyebrow: "Immersive • Materials • Lighting",
         kicker:
             "We craft atmospheres and mood with realistic lighting, shadows, and cinematic composition.",
-        video: "/videos/portfolio/3d-work.mp4", // your 3D work video
+        video: "/hls-command/3d-work/master.m3u8", // your 2D work video
+        poster: "/hls-command/3d-work/poster.jpg",
         layout: "text-left",
     },
     {
@@ -24,7 +25,7 @@ const SECTIONS = [
         eyebrow: "Creativity • Layout • Visuals",
         kicker:
             "Bringing ideas to life with stunning 2D compositions, balance, and artistic precision.",
-        video: "/videos/portfolio/2d-work.mp4", // your 2D work video
+        video: "/hls-command/2d-work/master.m3u8", // your 2D work video
         layout: "text-right",
     },
     {
@@ -33,7 +34,8 @@ const SECTIONS = [
         eyebrow: "Topology • Detail • Precision",
         kicker:
             "Clean meshes and striking silhouettes built for performance and visual fidelity.",
-        video: "/videos/portfolio/modeling.mp4", // your modeling video
+        video: "/hls-command/modeling/master.m3u8", // your 2D work video
+        poster: "/hls-command/modeling/poster.jpg",
         layout: "text-left",
     },
 

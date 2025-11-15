@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useRef, useState } from 'react';
+import React, { Suspense, useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, PerspectiveCamera, Html } from '@react-three/drei';
 
@@ -139,8 +139,75 @@ const Scene = () => {
 
 // Main Hero Component
 const Hero3DStudio: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Wait for fonts to load
+    const loadContent = async () => {
+      if (document.fonts) {
+        await document.fonts.ready;
+      }
+      // Small delay to ensure smooth transition
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 900);
+    };
+
+    loadContent();
+  }, []);
+
   return (
     <section id='home' className="relative w-full h-screen bg-black overflow-hidden">
+      {/* Loading Screen */}
+      {isLoading && (
+        <div className="fixed inset-0 z-50 bg-black flex items-center justify-center overflow-hidden">
+          {/* Background effects */}
+          <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-black to-purple-900/20"></div>
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+
+          {/* Grid overlay */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)] pointer-events-none"></div>
+
+          <div className="relative z-10 text-center">
+            <div className="relative text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter">
+              {/* Background text (always visible, dim) */}
+              <div className="text-gray-800 opacity-40">
+                <span>VEXA</span>
+                <span>MOTIONS</span>
+              </div>
+
+              {/* Animated fill overlay */}
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="animate-fill-mask">
+                  <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">VEXA</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 drop-shadow-[0_0_30px_rgba(0,255,255,0.5)]">MOTIONS</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-center gap-2">
+              <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+            </div>
+          </div>
+
+          <style jsx>{`
+      @keyframes fill-mask {
+        0% { 
+          clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+        }
+        100% { 
+          clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        }
+      }
+      .animate-fill-mask {
+        animation: fill-mask 2s ease-in-out;
+      }
+    `}</style>
+        </div>
+      )}
       {/* Gradient background effects */}
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-black to-purple-900/20"></div>
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] animate-pulse"></div>
