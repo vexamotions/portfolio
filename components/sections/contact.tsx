@@ -35,7 +35,7 @@ interface FlowStep {
 const FLOW: FlowStep[] = [
   {
     key: "name",
-    bot: "Hey! I'm Marcus, project manager at Vexa Motions 👋\n\nLet me put together a quick brief so I can connect you with the right team. What's your name?",
+    bot: "Hey! I'm Hamza, project manager at Vexa Motions 👋\n\nLet me put together a quick brief so I can connect you with the right team. What's your name?",
     input: "text",
     placeholder: "Your full name",
     validate: (v) =>
