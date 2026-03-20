@@ -492,7 +492,7 @@ export default function Contact() {
                   lineHeight: 1.2,
                 }}
               >
-                Marcus
+                Hamza
               </p>
               <p
                 style={{
