@@ -1,3 +1,5 @@
+"use client"
+
 import Footer from '@/components/layout/footer';
 import Navbar from '@/components/layout/navbar';
 import { MorphingBlob } from '@/components/MorphingBlob';
@@ -9,7 +11,6 @@ import {
   type ProjectCategorySlug,
 } from '@/lib/projects-data';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 
 interface CategoryPageProps {
   params: {
@@ -17,21 +18,9 @@ interface CategoryPageProps {
   };
 }
 
-export const dynamic = 'force-static';
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return PROJECT_CATEGORIES.map((category) => ({
-    category: category.slug,
-  }));
-}
-
 export default function CategoryProjectsPage({ params }: CategoryPageProps) {
   const category = params.category as ProjectCategorySlug;
-
-  if (!(category in PROJECT_CATEGORY_TITLE_MAP)) {
-    notFound();
-  }
+  const isValidCategory = category in PROJECT_CATEGORY_TITLE_MAP;
 
   const categoryMeta = PROJECT_CATEGORIES.find((item) => item.slug === category);
   const projects = ALL_PROJECTS.filter((project) => project.category === category);
@@ -47,16 +36,25 @@ export default function CategoryProjectsPage({ params }: CategoryPageProps) {
             ← Back to all categories
           </Link>
 
-          <div className="mb-10 max-w-3xl">
-            <h1 className="text-4xl font-bold md:text-6xl">{categoryMeta?.title}</h1>
-            <p className="mt-3 text-white/70">{categoryMeta?.description}</p>
-          </div>
+          {!isValidCategory ? (
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-8">
+              <h1 className="text-3xl font-bold">Category not found</h1>
+              <p className="mt-3 text-white/70">Please choose one of the available categories from the projects page.</p>
+            </div>
+          ) : (
+            <>
+              <div className="mb-10 max-w-3xl">
+                <h1 className="text-4xl font-bold md:text-6xl">{categoryMeta?.title}</h1>
+                <p className="mt-3 text-white/70">{categoryMeta?.description}</p>
+              </div>
 
-          <div className="grid grid-cols-1 gap-x-12 gap-y-20 md:grid-cols-2">
-            {projects.map((project, index) => (
-              <ProjectCard key={project.id} project={project} index={index} />
-            ))}
-          </div>
+              <div className="grid grid-cols-1 gap-x-12 gap-y-20 md:grid-cols-2">
+                {projects.map((project, index) => (
+                  <ProjectCard key={project.id} project={project} index={index} />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
       <Footer />
