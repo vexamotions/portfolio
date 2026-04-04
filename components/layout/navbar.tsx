@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Menu, X } from "lucide-react";
 import { gsap } from "gsap";
 import { usePathname, useRouter } from "next/navigation";
@@ -21,7 +21,6 @@ const NAVIGATION: NavItem[] = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
-  const [lastScrollY, setLastScrollY] = useState<number>(0);
   const [isVisible, setIsVisible] = useState<boolean>(true);
   const [activeSection, setActiveSection] = useState<string>("#home");
 
@@ -30,12 +29,28 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const navRef = useRef<HTMLElement | null>(null);
+  const lastScrollYRef = useRef<number>(0);
   const logoRef = useRef<HTMLDivElement | null>(null);
   const linksRef = useRef<(HTMLAnchorElement | null)[]>([]);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const mobileLinksRef = useRef<(HTMLAnchorElement | null)[]>([]);
   const progressBarRef = useRef<HTMLDivElement | null>(null);
+
+  const syncActiveSectionFromLocation = useCallback((): void => {
+    if (pathname !== "/") {
+      setActiveSection("#home");
+      return;
+    }
+
+    const currentHash = window.location.hash;
+    if (currentHash && NAVIGATION.some((item) => item.href === currentHash)) {
+      setActiveSection(currentHash);
+      return;
+    }
+
+    setActiveSection("#home");
+  }, [pathname]);
 
   useEffect(() => {
     // Initial navbar reveal animation
@@ -83,7 +98,7 @@ export default function Navbar() {
       const currentScrollY = window.scrollY;
       const docHeight =
         document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPercent = (currentScrollY / docHeight) * 100;
+      const scrollPercent = docHeight > 0 ? (currentScrollY / docHeight) * 100 : 0;
 
       // Update progress bar
       if (progressBarRef.current) {
@@ -97,31 +112,33 @@ export default function Navbar() {
       setIsScrolled(currentScrollY > 50);
 
       // Hide/show navbar
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+      if (currentScrollY > lastScrollYRef.current && currentScrollY > 100) {
         setIsVisible(false);
       } else {
         setIsVisible(true);
       }
 
-      // Track active section
-      const sections = NAVIGATION.map((item) => item.href);
-      for (const section of sections) {
-        const element = document.querySelector(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top <= 150 && rect.bottom >= 150) {
-            setActiveSection(section);
-            break;
+      // Track active section only on the home page
+      if (pathname === "/") {
+        const sections = NAVIGATION.map((item) => item.href);
+        for (const section of sections) {
+          const element = document.querySelector(section);
+          if (element) {
+            const rect = element.getBoundingClientRect();
+            if (rect.top <= 150 && rect.bottom >= 150) {
+              setActiveSection(section);
+              break;
+            }
           }
         }
       }
 
-      setLastScrollY(currentScrollY);
+      lastScrollYRef.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, [pathname]);
 
   useEffect(() => {
     gsap.to(navRef.current, {
@@ -130,6 +147,18 @@ export default function Navbar() {
       ease: "power3.out",
     });
   }, [isVisible]);
+
+  useEffect(() => {
+    syncActiveSectionFromLocation();
+
+    const handleHashChange = (): void => {
+      syncActiveSectionFromLocation();
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, [syncActiveSectionFromLocation]);
+
 
   useEffect(() => {
     if (isOpen && mobileMenuRef.current) {
@@ -191,6 +220,8 @@ export default function Navbar() {
     // Already on home page — scroll smoothly
     const element = document.querySelector(href);
     if (element) {
+      setActiveSection(href);
+      window.history.replaceState(null, "", href);
       element.scrollIntoView({ behavior: "smooth" });
     }
   };
