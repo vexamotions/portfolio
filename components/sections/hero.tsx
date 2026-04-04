@@ -1,6 +1,7 @@
 "use client";
 
 import React, { Suspense, useRef, useState, useEffect } from 'react';
+import Hls from 'hls.js';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, PerspectiveCamera, Html } from '@react-three/drei';
 
@@ -140,6 +141,8 @@ const Scene = () => {
 // Main Hero Component
 const Hero3DStudio: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [showVideoBackdrop, setShowVideoBackdrop] = useState(false);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     // Wait for fonts to load
@@ -154,6 +157,32 @@ const Hero3DStudio: React.FC = () => {
     };
 
     loadContent();
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setShowVideoBackdrop(true);
+    }, 5000);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const video = heroVideoRef.current;
+    if (!video) return;
+
+    const source = '/hls-command/3d-animations-mixture/master.m3u8';
+
+    if (Hls.isSupported()) {
+      const hls = new Hls({ autoStartLoad: true });
+      hls.loadSource(source);
+      hls.attachMedia(video);
+      return () => hls.destroy();
+    }
+
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = source;
+    }
   }, []);
 
   return (
@@ -212,6 +241,17 @@ const Hero3DStudio: React.FC = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-black to-purple-900/20"></div>
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] animate-pulse"></div>
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+
+      {/* Cinematic video backdrop (reveals after 5s) */}
+      <video
+        ref={heroVideoRef}
+        autoPlay
+        muted
+        loop
+        playsInline
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${showVideoBackdrop ? 'opacity-35' : 'opacity-0'}`}
+      />
+      <div className={`absolute inset-0 bg-black transition-opacity duration-1000 ${showVideoBackdrop ? 'opacity-30' : 'opacity-70'}`} />
 
       {/* 3D Canvas Container - Right side */}
       <div className="absolute inset-0 md:left-1/4 lg:left-1/3">
