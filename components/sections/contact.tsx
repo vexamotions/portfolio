@@ -350,81 +350,129 @@ export default function Contact() {
 
       {/* ── Launcher ──────────────────────────────────────────────────────────── */}
       {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          aria-label="Chat with our project manager"
-          style={{
-            position: "fixed",
-            bottom: "24px",
-            left: "24px",
-            zIndex: 9998,
-            width: "54px",
-            height: "54px",
-            borderRadius: "50%",
-            background: "#fff",
-            border: "none",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 6px 28px rgba(0,0,0,0.55)",
-            transition: "transform 0.18s, box-shadow 0.18s",
-          }}
-          onMouseEnter={(e) => {
-            const el = e.currentTarget as HTMLElement;
-            el.style.transform = "scale(1.1)";
-            el.style.boxShadow = "0 10px 36px rgba(0,0,0,0.65)";
-          }}
-          onMouseLeave={(e) => {
-            const el = e.currentTarget as HTMLElement;
-            el.style.transform = "scale(1)";
-            el.style.boxShadow = "0 6px 28px rgba(0,0,0,0.55)";
-          }}
-        >
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#000"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        <>
+          <a
+            href="https://wa.me/17088827113"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Chat on WhatsApp at +1 (708) 882-7113"
+            title="WhatsApp: +1 (708) 882-7113"
+            style={{
+              position: "fixed",
+              bottom: "24px",
+              left: "88px",
+              zIndex: 9998,
+              width: "54px",
+              height: "54px",
+              borderRadius: "50%",
+              background: "#25D366",
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 8px 30px rgba(0,0,0,0.4)",
+              transition: "transform 0.18s, box-shadow 0.18s",
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLElement;
+              el.style.transform = "scale(1.08)";
+              el.style.boxShadow = "0 12px 40px rgba(0,0,0,0.55)";
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLElement;
+              el.style.transform = "scale(1)";
+              el.style.boxShadow = "0 8px 30px rgba(0,0,0,0.4)";
+            }}
           >
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
-          {unread > 0 && (
-            <span
-              style={{
-                position: "absolute",
-                top: "1px",
-                right: "1px",
-                width: "18px",
-                height: "18px",
-                borderRadius: "50%",
-                background: "#ef4444",
-                border: "2px solid #fff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "9px",
-                fontWeight: 700,
-                color: "#fff",
-              }}
+            <svg width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <path
+                fill="#fff"
+                d="M19.11 17.17c-.29-.15-1.72-.84-1.98-.94-.27-.1-.46-.15-.66.15-.2.3-.76.94-.93 1.13-.17.2-.34.22-.63.08-.29-.15-1.2-.44-2.3-1.4-.85-.76-1.43-1.7-1.6-1.98-.17-.29-.02-.45.12-.6.13-.13.29-.34.44-.5.15-.17.2-.29.3-.49.1-.2.05-.37-.02-.52-.07-.15-.66-1.58-.9-2.17-.24-.57-.49-.49-.66-.49h-.57c-.2 0-.52.08-.79.37-.27.3-1.03 1-1.03 2.44 0 1.43 1.05 2.82 1.19 3.02.15.2 2.06 3.14 5.02 4.4.7.3 1.25.47 1.67.6.7.22 1.34.19 1.84.12.56-.08 1.72-.7 1.96-1.38.24-.69.24-1.28.17-1.4-.07-.13-.27-.2-.56-.35Z"
+              />
+              <path
+                fill="#fff"
+                d="M16 4.8c-6.17 0-11.2 4.95-11.2 11.06 0 1.95.52 3.86 1.51 5.54L4.7 27.2l5.97-1.56c1.63.88 3.47 1.34 5.33 1.34h.01c6.17 0 11.2-4.95 11.2-11.06C27.2 9.75 22.17 4.8 16 4.8Zm0 20.24h-.01c-1.68 0-3.32-.45-4.75-1.3l-.34-.2-3.54.93.95-3.43-.22-.35a9.04 9.04 0 0 1-1.4-4.81c0-4.99 4.12-9.06 9.3-9.06 5.12 0 9.3 4.06 9.3 9.06 0 5-4.17 9.06-9.3 9.06Z"
+              />
+            </svg>
+          </a>
+
+          <button
+            onClick={() => setOpen(true)}
+            aria-label="Chat with our project manager"
+            style={{
+              position: "fixed",
+              bottom: "24px",
+              left: "24px",
+              zIndex: 9998,
+              width: "54px",
+              height: "54px",
+              borderRadius: "50%",
+              background: "#fff",
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 6px 28px rgba(0,0,0,0.55)",
+              transition: "transform 0.18s, box-shadow 0.18s",
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLElement;
+              el.style.transform = "scale(1.1)";
+              el.style.boxShadow = "0 10px 36px rgba(0,0,0,0.65)";
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLElement;
+              el.style.transform = "scale(1)";
+              el.style.boxShadow = "0 6px 28px rgba(0,0,0,0.55)";
+            }}
+          >
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#000"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              {unread}
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            {unread > 0 && (
               <span
                 style={{
                   position: "absolute",
-                  inset: "-2px",
+                  top: "1px",
+                  right: "1px",
+                  width: "18px",
+                  height: "18px",
                   borderRadius: "50%",
                   background: "#ef4444",
-                  animation: "vm-ping 1.4s cubic-bezier(0,0,0.2,1) infinite",
+                  border: "2px solid #fff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "9px",
+                  fontWeight: 700,
+                  color: "#fff",
                 }}
-              />
-            </span>
-          )}
-        </button>
+              >
+                {unread}
+                <span
+                  style={{
+                    position: "absolute",
+                    inset: "-2px",
+                    borderRadius: "50%",
+                    background: "#ef4444",
+                    animation: "vm-ping 1.4s cubic-bezier(0,0,0.2,1) infinite",
+                  }}
+                />
+              </span>
+            )}
+          </button>
+        </>
       )}
 
       {/* ── Chat Panel ────────────────────────────────────────────────────────── */}

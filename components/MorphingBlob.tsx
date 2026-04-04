@@ -1,3 +1,5 @@
+"use client";
+
 import { MousePosition } from '@/types/types';
 import React, { useRef, useEffect } from 'react';
 
