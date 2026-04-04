@@ -5,6 +5,7 @@ import Footer from "@/components/layout/footer";
 import { OurProcess } from "@/components/sections/our-process";
 import Work from "@/components/sections/WorkSection";
 import ServicesSection from "@/components/sections/ServiceSection";
+import EnhancedCTAButton from "@/components/EnhancedCTAButton";
 
 export default function Home() {
   return (
@@ -12,7 +13,7 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
-        <Work />
+        <EnhancedCTAButton />
         <ServicesSection />
         <OurProcess />
         <Contact />

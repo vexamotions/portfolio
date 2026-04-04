@@ -1,25 +1,28 @@
-"use client"
+"use client";
 
-import Footer from '@/components/layout/footer';
-import Navbar from '@/components/layout/navbar';
-import Link from 'next/link';
-import Image from 'next/image';
-import { MorphingBlob } from '@/components/MorphingBlob';
-import { PROJECT_CATEGORIES } from '@/lib/projects-data';
+import Footer from "@/components/layout/footer";
+import Navbar from "@/components/layout/navbar";
+import Link from "next/link";
+import Image from "next/image";
+import { MorphingBlob } from "@/components/MorphingBlob";
+import { PROJECT_CATEGORIES } from "@/lib/projects-data";
 
 const AllProjects: React.FC = () => {
   return (
     <>
       <Navbar />
       <div className="min-h-screen bg-black text-white">
-        <MorphingBlob />
-
         <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-24 pt-28 sm:px-6 lg:px-8">
           <div className="mb-12 text-center">
-            <p className="mb-3 text-sm uppercase tracking-[0.3em] text-cyan-300/70">Projects Library</p>
-            <h1 className="text-4xl font-bold md:text-6xl">Choose a creative lane</h1>
+            <p className="mb-3 text-sm uppercase tracking-[0.3em] text-cyan-300/70">
+              Projects Library
+            </p>
+            <h1 className="text-4xl font-bold md:text-6xl">
+              Choose a creative lane
+            </h1>
             <p className="mx-auto mt-4 max-w-2xl text-base text-white/70 md:text-lg">
-              Explore our work by category. Click any card to open all projects in that section.
+              Explore our work by category. Click any card to open all projects
+              in that section.
             </p>
           </div>
 
@@ -43,7 +46,9 @@ const AllProjects: React.FC = () => {
 
                 <div className="p-6">
                   <h2 className="text-2xl font-semibold">{category.title}</h2>
-                  <p className="mt-2 text-sm text-white/70">{category.description}</p>
+                  <p className="mt-2 text-sm text-white/70">
+                    {category.description}
+                  </p>
                   <span className="mt-5 inline-flex items-center text-sm font-medium text-cyan-300 transition group-hover:text-cyan-200">
                     View projects →
                   </span>
