@@ -1,5 +1,3 @@
-"use client";
-
 import Footer from "@/components/layout/footer";
 import Navbar from "@/components/layout/navbar";
 import { MorphingBlob } from "@/components/MorphingBlob";
@@ -12,7 +10,7 @@ import {
 } from "@/lib/projects-data";
 import Link from "next/link";
 
-/* ✅ REQUIRED for static export */
+/* ✅ Required for static export */
 export async function generateStaticParams() {
   return PROJECT_CATEGORIES.map((item) => ({
     category: item.slug,
