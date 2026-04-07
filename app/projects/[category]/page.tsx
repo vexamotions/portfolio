@@ -12,6 +12,13 @@ import {
 } from "@/lib/projects-data";
 import Link from "next/link";
 
+/* ✅ REQUIRED for static export */
+export async function generateStaticParams() {
+  return PROJECT_CATEGORIES.map((item) => ({
+    category: item.slug,
+  }));
+}
+
 interface CategoryPageProps {
   params: {
     category: string;
@@ -25,6 +32,7 @@ export default function CategoryProjectsPage({ params }: CategoryPageProps) {
   const categoryMeta = PROJECT_CATEGORIES.find(
     (item) => item.slug === category,
   );
+
   const projects = ALL_PROJECTS.filter(
     (project) => project.category === category,
   );
