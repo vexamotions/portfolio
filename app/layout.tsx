@@ -11,6 +11,11 @@ export const metadata: Metadata = {
   title: "Vexamotions - Creative Digital Experiences",
   description:
     "Premium digital experiences and creative solutions crafted with innovative design and cutting-edge technology.",
+  icons: {
+    icon: "https://avatars.githubusercontent.com/u/267497498?v=4",
+    shortcut: "https://avatars.githubusercontent.com/u/267497498?v=4",
+    apple: "https://avatars.githubusercontent.com/u/267497498?v=4",
+  },
 }
 
 export default function RootLayout({
