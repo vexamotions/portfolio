@@ -3,7 +3,9 @@
 import { Project } from '@/types/types';
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import Hls from 'hls.js';
+import { projectSlug, projectThumbnail } from '@/lib/projects-data';
 
 interface ProjectCardProps {
     project: Project;
@@ -16,15 +18,22 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
     const [imageLoaded, setImageLoaded] = useState<boolean>(false);
     const [videoLoading, setVideoLoading] = useState<boolean>(false);
     const videoRef = useRef<HTMLVideoElement>(null);
-    const cardRef = useRef<HTMLDivElement>(null);
+    const cardRef = useRef<HTMLAnchorElement>(null);
     const hlsRef = useRef<Hls | null>(null);
 
-    // Setup HLS (but don't auto-load)
     useEffect(() => {
         if (!videoRef.current) return;
 
         const video = videoRef.current;
         const videoSrc = project.video;
+
+        if (!videoSrc) return;
+
+        if (!videoSrc.toLowerCase().endsWith('.m3u8')) {
+            video.src = videoSrc;
+            video.preload = 'none';
+            return;
+        }
 
         if (Hls.isSupported()) {
             const hls = new Hls({
@@ -43,7 +52,6 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
         }
     }, [project.video]);
 
-    // Intersection Observer
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
@@ -71,6 +79,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
 
     const handleMouseEnter = (): void => {
         setIsHovered(true);
+        if (project.youtubeId) return;
         setVideoLoading(true);
 
         if (videoRef.current) {
@@ -108,18 +117,19 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
     };
 
     return (
-        <div
+        <Link
+            href={`/projects/${project.category}/${projectSlug(project)}`}
             ref={cardRef}
-            className={`group cursor-pointer transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+            className={`group block cursor-pointer transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
                 }`}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
             <div className="relative overflow-hidden rounded-2xl bg-zinc-900 aspect-video mb-6">
-                <div className={`absolute inset-0 w-full h-full transition-all duration-700 ${isHovered ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+                <div className={`absolute inset-0 w-full h-full transition-all duration-700 ${isHovered && !project.youtubeId ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
                     }`}>
                     <Image
-                        src={project.thumbnail}
+                        src={projectThumbnail(project)}
                         alt={project.title}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -129,16 +139,28 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                     />
                 </div>
 
-                <video
-                    ref={videoRef}
-                    muted
-                    loop
-                    playsInline
-                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${isHovered ? 'opacity-100 scale-103' : 'opacity-0 scale-100'
-                        }`}
-                />
+                {project.youtubeId ? (
+                    isHovered && (
+                        <iframe
+                            key={project.youtubeId}
+                            className="pointer-events-none absolute left-1/2 top-1/2 h-[135%] w-[135%] -translate-x-1/2 -translate-y-1/2"
+                            src={`https://www.youtube-nocookie.com/embed/${project.youtubeId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${project.youtubeId}&modestbranding=1&rel=0&playsinline=1&disablekb=1&fs=0&iv_load_policy=3`}
+                            allow="autoplay; encrypted-media"
+                            tabIndex={-1}
+                            title={project.title}
+                        />
+                    )
+                ) : (
+                    <video
+                        ref={videoRef}
+                        muted
+                        loop
+                        playsInline
+                        className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${isHovered ? 'opacity-100 scale-103' : 'opacity-0 scale-100'
+                            }`}
+                    />
+                )}
 
-                {/* Loading spinner */}
                 {videoLoading && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                         <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
@@ -170,6 +192,6 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                     {project.description}
                 </p>
             </div>
-        </div>
+        </Link>
     );
 };

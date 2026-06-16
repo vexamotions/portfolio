@@ -2,7 +2,7 @@
 import CircularGallery from "../animations/CircularGallery"
 
 const ServicesSection = () => {
-    // Define services with images and descriptions
+
     const services = [
         {
             image: "/images/3d-animation.jpg",
@@ -56,12 +56,12 @@ const ServicesSection = () => {
             <div className="h-[70vh] relative">
                 <CircularGallery
                     items={services}
-                    bend={1.2} // Slightly reduced for smoother curvature
+                    bend={1.2}
                     textColor="#ffffff"
-                    borderRadius={0.1} // Modern, subtle rounded edges
-                    font="bold 28px Geist Sans" // Consistent with professional look
-                    scrollEase={0.04} // Smooth scrolling
-                    scrollSpeed={1.8} // Controlled speed for better UX
+                    borderRadius={0.1}
+                    font="bold 28px Geist Sans"
+                    scrollEase={0.04}
+                    scrollSpeed={1.8}
                 />
             </div>
 

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Menu, X } from "lucide-react";
 import { gsap } from "gsap";
 import { usePathname, useRouter } from "next/navigation";
+import { scrollToHash } from "@/lib/smooth-scroll";
 
 interface NavItem {
   label: string;
@@ -24,7 +25,6 @@ export default function Navbar() {
   const [isVisible, setIsVisible] = useState<boolean>(true);
   const [activeSection, setActiveSection] = useState<string>("#home");
 
-  // For routing
   const router = useRouter();
   const pathname = usePathname();
 
@@ -53,7 +53,7 @@ export default function Navbar() {
   }, [pathname]);
 
   useEffect(() => {
-    // Initial navbar reveal animation
+
     const tl = gsap.timeline();
     tl.fromTo(
       navRef.current,
@@ -61,7 +61,6 @@ export default function Navbar() {
       { y: 0, opacity: 1, duration: 1, ease: "power3.out", delay: 0.2 },
     );
 
-    // Logo entrance with split animation
     gsap.fromTo(
       logoRef.current,
       { clipPath: "inset(0 100% 0 0)" },
@@ -73,7 +72,6 @@ export default function Navbar() {
       },
     );
 
-    // Button hover animation setup
     if (buttonRef.current) {
       const btn = buttonRef.current;
       btn.addEventListener("mouseenter", () => {
@@ -100,7 +98,6 @@ export default function Navbar() {
         document.documentElement.scrollHeight - window.innerHeight;
       const scrollPercent = docHeight > 0 ? (currentScrollY / docHeight) * 100 : 0;
 
-      // Update progress bar
       if (progressBarRef.current) {
         gsap.to(progressBarRef.current, {
           width: `${scrollPercent}%`,
@@ -111,14 +108,12 @@ export default function Navbar() {
 
       setIsScrolled(currentScrollY > 50);
 
-      // Hide/show navbar
       if (currentScrollY > lastScrollYRef.current && currentScrollY > 100) {
         setIsVisible(false);
       } else {
         setIsVisible(true);
       }
 
-      // Track active section only on the home page
       if (pathname === "/") {
         const sections = NAVIGATION.map((item) => item.href);
         for (const section of sections) {
@@ -159,10 +154,8 @@ export default function Navbar() {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, [syncActiveSectionFromLocation]);
 
-
   useEffect(() => {
     if (isOpen && mobileMenuRef.current) {
-      // Mobile menu entrance
       gsap.fromTo(
         mobileMenuRef.current,
         { clipPath: "circle(0% at 100% 0%)" },
@@ -173,7 +166,6 @@ export default function Navbar() {
         },
       );
 
-      // Stagger links
       gsap.fromTo(
         mobileLinksRef.current,
         { x: 50, opacity: 0 },
@@ -212,17 +204,14 @@ export default function Navbar() {
     setIsOpen(false);
 
     if (pathname !== "/") {
-      // Navigate to home with hash (so it scrolls after navigation)
       router.push(`/${href}`);
       return;
     }
 
-    // Already on home page — scroll smoothly
-    const element = document.querySelector(href);
-    if (element) {
+    if (document.querySelector(href)) {
       setActiveSection(href);
       window.history.replaceState(null, "", href);
-      element.scrollIntoView({ behavior: "smooth" });
+      scrollToHash(href);
     }
   };
 
@@ -232,14 +221,13 @@ export default function Navbar() {
         ref={navRef}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300`}
       >
-        {/* Background with blur */}
+
         <div
           className={`absolute inset-0 transition-all duration-500 ${
             isScrolled ? "bg-black/60 backdrop-blur-2xl" : "bg-transparent"
           }`}
         />
 
-        {/* Animated progress bar */}
         <div
           ref={progressBarRef}
           className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500"
@@ -248,7 +236,7 @@ export default function Navbar() {
 
         <div className="relative max-w-7xl mx-auto px-6 sm:px-8">
           <div className="flex items-center justify-between h-20">
-            {/* Logo */}
+
             <a
               href="#home"
               onClick={(e) => {
@@ -266,7 +254,6 @@ export default function Navbar() {
               <div className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-cyan-400 to-purple-500 group-hover:w-full transition-all duration-300" />
             </a>
 
-            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-1">
               {NAVIGATION.map((item, index) => {
                 const isActive = activeSection === item.href;
@@ -274,7 +261,9 @@ export default function Navbar() {
                   <a
                     key={item.href}
                     href={item.href}
-                    ref={(el) => (linksRef.current[index] = el)}
+                    ref={(el) => {
+                      linksRef.current[index] = el;
+                    }}
                     onClick={(e) => {
                       e.preventDefault();
                       handleNavClick(item.href);
@@ -294,23 +283,10 @@ export default function Navbar() {
               })}
             </div>
 
-            {/* CTA Button */}
             <div className="hidden md:block">
-              {/* <button
-                onClick={() => handleNavClick("#contact")}
-                className=" px-8 py-2 text-lg font-medium text-white rounded-full cursor-pointer"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(139, 92, 246, 0.3))",
-                  border: "2px solid rgba(139, 92, 246, 0.6)",
-                  boxShadow: "0 0 30px rgba(139, 92, 246, 0.5)",
-                }}
-              >
-                Get In Touch
-              </button> */}
+
             </div>
 
-            {/* Mobile menu button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="md:hidden relative z-50 text-white p-2 hover:bg-white/5 rounded-lg transition-colors"
@@ -325,7 +301,6 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       {isOpen && (
         <div
           ref={mobileMenuRef}
@@ -336,7 +311,9 @@ export default function Navbar() {
               <a
                 key={item.href}
                 href={item.href}
-                ref={(el) => (mobileLinksRef.current[index] = el)}
+                ref={(el) => {
+                  mobileLinksRef.current[index] = el;
+                }}
                 onClick={(e) => {
                   e.preventDefault();
                   handleNavClick(item.href);
@@ -362,33 +339,6 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Demo Content */}
-      {/* <div>
-        <section id="home" className="min-h-screen flex items-center justify-center bg-black">
-          <div className="text-center">
-            <h1 className="text-7xl md:text-9xl font-bold text-white mb-6 tracking-tighter">
-              Creative<br />Agency
-            </h1>
-            <p className="text-lg text-white/60">3D • Video • Web Development</p>
-          </div>
-        </section>
-
-        <section id="work" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-purple-950/20 to-black">
-          <h2 className="text-6xl font-bold text-white">Our Work</h2>
-        </section>
-
-        <section id="services" className="min-h-screen flex items-center justify-center bg-black">
-          <h2 className="text-6xl font-bold text-white">Services</h2>
-        </section>
-
-        <section id="about" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-cyan-950/20 to-black">
-          <h2 className="text-6xl font-bold text-white">About Us</h2>
-        </section>
-
-        <section id="contact" className="min-h-screen flex items-center justify-center bg-black">
-          <h2 className="text-6xl font-bold text-white">Get In Touch</h2>
-        </section>
-      </div> */}
     </>
   );
 }

@@ -1,312 +1,279 @@
 "use client";
 
-import React, { Suspense, useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Hls from 'hls.js';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useGLTF, PerspectiveCamera, Html } from '@react-three/drei';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Volume2, VolumeX, ArrowUpRight } from 'lucide-react';
 
-// Type-safe model configuration
-interface ModelConfig {
-  path: string;
-  scale: number;
-  position: [number, number, number];
-  rotation: [number, number, number];
-  label: string;
-}
-
-// Configuration for models - EDIT THESE VALUES
-const MODEL_CONFIGS: ModelConfig[] = [
-  // {
-  //   path: '/assets/3d/girl_cartoon.glb',
-  //   scale: 2.5,
-  //   position: [-2, 0, 0],
-  //   rotation: [0, 0.2, 0],
-  //   label: 'Cartoon Character'
-  // },
-  {
-    path: '/assets/3d/girl.glb',
-    scale: 2.5,
-    position: [2, 0, 0],
-    rotation: [0, -0.5, 0],
-    label: 'Character'
-  }
-];
-
-// Individual model loader - shows at model position
-const ModelLoader = () => (
-  <Html center>
-    <div className="flex flex-col items-center">
-      <div className="relative w-16 h-16">
-        <div className="absolute inset-0 rounded-full border-4 border-cyan-500/20"></div>
-        <div className="absolute inset-0 rounded-full border-4 border-t-cyan-500 border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
-        <div className="absolute inset-2 rounded-full border-4 border-purple-500/20"></div>
-        <div className="absolute inset-2 rounded-full border-4 border-t-purple-500 border-r-transparent border-b-transparent border-l-transparent animate-spin"
-          style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
-      </div>
-      <p className="text-white text-xs mt-2">Loading...</p>
-    </div>
-  </Html>
-);
-
-// Individual Model Component
-interface ModelProps {
-  config: ModelConfig;
-  index: number;
-}
-
-const Model: React.FC<ModelProps> = ({ config, index }) => {
-  const groupRef = useRef<THREE.Group>(null);
-  const [hovered, setHovered] = useState(false);
-
-  const { scene } = useGLTF(config.path);
-
-  // Animate each model with slight variations
-  useFrame((state) => {
-    if (groupRef.current) {
-      // Subtle rotation
-      const offset = index * 2;
-      groupRef.current.rotation.y = config.rotation[1] + Math.sin(state.clock.elapsedTime * 0.3 + offset) * 0.1;
-
-      // Gentle floating motion
-      groupRef.current.position.y = config.position[1] + Math.sin(state.clock.elapsedTime * 0.5 + offset) * 0.2;
-
-      // Hover effect - slight tilt
-      if (hovered) {
-        groupRef.current.rotation.x += (0.1 - groupRef.current.rotation.x) * 0.1;
-      } else {
-        groupRef.current.rotation.x += (0 - groupRef.current.rotation.x) * 0.1;
-      }
-    }
-  });
-
-  return (
-    <group
-      ref={groupRef}
-      position={config.position}
-      rotation={config.rotation}
-      scale={config.scale}
-      onPointerOver={() => setHovered(true)}
-      onPointerOut={() => setHovered(false)}
-    >
-      <primitive object={scene.clone()} />
-    </group>
-  );
+const textContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12, delayChildren: 0.15 } },
 };
 
-// 3D Scene Component
-const Scene = () => {
-  return (
-    <>
-      <PerspectiveCamera makeDefault position={[0, 0, 8]} fov={50} />
-
-      {/* Lighting setup */}
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[10, 10, 5]} intensity={1.2} color="#ffffff" />
-      <spotLight
-        position={[8, 8, 8]}
-        angle={0.4}
-        penumbra={1}
-        intensity={1.8}
-        castShadow
-        color="#00ffff"
-      />
-      <spotLight
-        position={[-8, 8, -8]}
-        angle={0.4}
-        penumbra={1}
-        intensity={1.5}
-        color="#ff00ff"
-      />
-      <pointLight position={[0, 5, 5]} intensity={1} color="#ffffff" />
-
-      {/* Render each model with its own suspense boundary for progressive loading */}
-      {MODEL_CONFIGS.map((config, index) => (
-        <Suspense key={config.path} fallback={<ModelLoader />}>
-          <Model config={config} index={index} />
-        </Suspense>
-      ))}
-
-      {/* Interactive camera controls */}
-      <OrbitControls
-        enableZoom={false}
-        enablePan={false}
-        minPolarAngle={Math.PI / 2.5}
-        maxPolarAngle={Math.PI / 1.8}
-        rotateSpeed={0.5}
-      />
-    </>
-  );
+const lineRise = {
+  hidden: { y: '115%' },
+  show: { y: 0, transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
-// Main Hero Component
-const Hero3DStudio: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [showVideoBackdrop, setShowVideoBackdrop] = useState(false);
+const fadeUp = {
+  hidden: { opacity: 0, y: 22 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const } },
+};
+
+const Hero: React.FC = () => {
+  const [count, setCount] = useState(0);
+  const [ready, setReady] = useState(false);
+  const [entered, setEntered] = useState(false);
+  const [muted, setMuted] = useState(true);
+
   const heroVideoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const enteredRef = useRef(false);
+  const mutedRef = useRef(true);
 
   useEffect(() => {
-    // Wait for fonts to load
-    const loadContent = async () => {
-      if (document.fonts) {
-        await document.fonts.ready;
-      }
-      // Small delay to ensure smooth transition
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 900);
+    let raf = 0;
+    let start: number | null = null;
+    const duration = 1700;
+    const tick = (ts: number) => {
+      if (start === null) start = ts;
+      const p = Math.min(1, (ts - start) / duration);
+      setCount(Math.round(p * 100));
+      if (p < 1) raf = requestAnimationFrame(tick);
+      else setReady(true);
     };
-
-    loadContent();
-  }, []);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setShowVideoBackdrop(true);
-    }, 5000);
-
-    return () => window.clearTimeout(timer);
+    const begin = async () => {
+      if (document.fonts) await document.fonts.ready;
+      raf = requestAnimationFrame(tick);
+    };
+    begin();
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   useEffect(() => {
     const video = heroVideoRef.current;
     if (!video) return;
-
     const source = '/hls-command/3d-animations-mixture/master.m3u8';
-
     if (Hls.isSupported()) {
       const hls = new Hls({ autoStartLoad: true });
       hls.loadSource(source);
       hls.attachMedia(video);
       return () => hls.destroy();
     }
-
     if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = source;
     }
   }, []);
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    const video = heroVideoRef.current;
+    if (!section || !video) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!enteredRef.current) return;
+        if (entry.isIntersecting) {
+          video.muted = mutedRef.current;
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  const handleEnter = () => {
+    const video = heroVideoRef.current;
+    if (video) {
+      video.muted = false;
+      video.volume = 1;
+      video.play().catch(() => {});
+    }
+    mutedRef.current = false;
+    enteredRef.current = true;
+    setMuted(false);
+    setEntered(true);
+  };
+
+  const toggleMute = () => {
+    const video = heroVideoRef.current;
+    if (!video) return;
+    const next = !video.muted;
+    video.muted = next;
+    if (!next) video.play().catch(() => {});
+    mutedRef.current = next;
+    setMuted(next);
+  };
+
   return (
-    <section id='home' className="relative w-full h-screen bg-black overflow-hidden">
-      {/* Loading Screen */}
-      {isLoading && (
-        <div className="fixed inset-0 z-50 bg-black flex items-center justify-center overflow-hidden">
-          {/* Background effects */}
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-black to-purple-900/20"></div>
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+    <section ref={sectionRef} id="home" className="relative h-screen w-full overflow-hidden bg-black">
 
-          {/* Grid overlay */}
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)] pointer-events-none"></div>
+      <AnimatePresence>
+        {!entered && (
+          <motion.div
+            key="gate"
+            className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-[#050608]"
+            exit={{ opacity: 0, scale: 1.04 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <motion.div className="absolute left-1/3 top-1/3 h-[40vh] w-[40vw] -translate-x-1/2 rounded-full bg-cyan-500/10 blur-[130px]"
+              animate={{ opacity: [0.4, 0.75, 0.4] }} transition={{ duration: 4, repeat: Infinity }} />
+            <motion.div className="absolute bottom-1/4 right-1/4 h-[40vh] w-[40vw] translate-x-1/2 rounded-full bg-purple-500/10 blur-[130px]"
+              animate={{ opacity: [0.4, 0.75, 0.4] }} transition={{ duration: 4, repeat: Infinity, delay: 1.2 }} />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:80px_80px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_50%,black,transparent)]" />
 
-          <div className="relative z-10 text-center">
-            <div className="relative text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter">
-              {/* Background text (always visible, dim) */}
-              <div className="text-gray-800 opacity-40">
-                <span>VEXA</span>
-                <span>MOTIONS</span>
+            <div className="relative z-10 flex w-full max-w-xl flex-col items-center px-6 text-center">
+              <motion.p
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+                className="font-display text-xs font-medium uppercase tracking-[0.6em] text-white/40"
+              >
+                Vexamotions
+              </motion.p>
+
+              <div className="mt-8 font-display text-[24vw] font-bold leading-[0.85] tracking-tighter md:text-[11rem]">
+                <span className="bg-gradient-to-b from-white via-white to-white/25 bg-clip-text tabular-nums text-transparent">
+                  {count.toString().padStart(2, '0')}
+                </span>
+                <span className="ml-1 align-top text-2xl text-cyan-300/60 md:text-4xl">%</span>
               </div>
 
-              {/* Animated fill overlay */}
-              <div className="absolute inset-0 overflow-hidden">
-                <div className="animate-fill-mask">
-                  <span className="text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">VEXA</span>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 drop-shadow-[0_0_30px_rgba(0,255,255,0.5)]">MOTIONS</span>
-                </div>
+              <div className="mt-6 flex h-20 w-full max-w-sm items-start justify-center">
+                <AnimatePresence mode="wait">
+                  {!ready ? (
+                    <motion.div key="bar" className="flex w-full flex-col items-center gap-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                      <div className="h-px w-full overflow-hidden bg-white/10">
+                        <div className="h-full bg-gradient-to-r from-cyan-400 to-purple-500" style={{ width: `${count}%` }} />
+                      </div>
+                      <p className="text-[11px] uppercase tracking-[0.4em] text-white/30">Loading experience</p>
+                    </motion.div>
+                  ) : (
+                    <motion.button
+                      key="enter"
+                      onClick={handleEnter}
+                      initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+                      className="group flex flex-col items-center gap-3"
+                    >
+                      <span className="relative flex items-center gap-3 overflow-hidden rounded-full bg-white px-10 py-4 font-display text-sm font-semibold uppercase tracking-[0.25em] text-black transition-shadow duration-300 group-hover:shadow-[0_0_50px_-10px_rgba(255,255,255,0.6)]">
+                        Enter
+                        <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      </span>
+                      <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.2em] text-white/40">
+                        <Volume2 className="h-3.5 w-3.5" /> Best with sound on
+                      </span>
+                    </motion.button>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-            <div className="mt-8 flex justify-center gap-2">
-              <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-              <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-            </div>
-          </div>
-
-          <style jsx>{`
-      @keyframes fill-mask {
-        0% { 
-          clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-        }
-        100% { 
-          clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-        }
-      }
-      .animate-fill-mask {
-        animation: fill-mask 2s ease-in-out;
-      }
-    `}</style>
-        </div>
-      )}
-      {/* Gradient background effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/20 via-black to-purple-900/20"></div>
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
-
-      {/* Cinematic video backdrop (reveals after 5s) */}
       <video
         ref={heroVideoRef}
         autoPlay
         muted
         loop
         playsInline
-        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${showVideoBackdrop ? 'opacity-35' : 'opacity-0'}`}
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${entered ? 'opacity-100' : 'opacity-0'}`}
       />
-      <div className={`absolute inset-0 bg-black transition-opacity duration-1000 ${showVideoBackdrop ? 'opacity-30' : 'opacity-70'}`} />
 
-      {/* 3D Canvas Container - Right side */}
-      <div className="absolute inset-0 md:left-1/4 lg:left-1/3">
-        <Canvas
-          className="w-full h-full"
-          gl={{
-            antialias: true,
-            alpha: true,
-            powerPreference: 'high-performance'
-          }}
-        >
-          <Scene />
-        </Canvas>
-      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/25" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/35 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_200px_70px_rgba(0,0,0,0.75)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:90px_90px] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_50%,black,transparent)]" />
 
-      {/* Hero Text Content */}
-      <div className="relative z-10 h-full flex items-center">
+      <div className="pointer-events-none absolute -bottom-20 left-1/4 h-[40vh] w-[40vw] rounded-full bg-cyan-500/10 blur-[140px]" />
+      <div className="pointer-events-none absolute -top-10 right-1/4 h-[35vh] w-[35vw] rounded-full bg-purple-600/10 blur-[140px]" />
+
+      <div className="relative z-10 flex h-full items-center">
         <div className="container mx-auto px-6 md:px-12 lg:px-16">
-          <div className="max-w-3xl">
-            {/* Main Headline */}
-            <h1 className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tighter leading-none mb-6">
-              <span className="block text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
-                JOIN THE
+          <motion.div className="max-w-3xl" variants={textContainer} initial="hidden" animate={entered ? 'show' : 'hidden'}>
+
+            <motion.div variants={fadeUp} className="mb-7 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/5 px-4 py-2 backdrop-blur-md">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan-400" />
               </span>
-              <span className="block bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(0,255,255,0.5)]">
-                NEW ERA
+              <span className="text-xs font-medium uppercase tracking-[0.25em] text-white/80">
+                Creative Motion Studio
               </span>
-              <span className="block text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
-                OF CREATIVE
+            </motion.div>
+
+            <h1 className="mb-6 font-display text-5xl font-bold leading-[0.92] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+              <span className="block overflow-hidden pb-[0.08em]">
+                <motion.span variants={lineRise} className="inline-block text-white drop-shadow-[0_2px_30px_rgba(0,0,0,0.5)]">
+                  JOIN THE
+                </motion.span>
+              </span>
+              <span className="block overflow-hidden pb-[0.08em]">
+                <motion.span variants={lineRise} className="inline-block bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(0,255,255,0.3)]">
+                  NEW ERA
+                </motion.span>
+              </span>
+              <span className="block overflow-hidden pb-[0.08em]">
+                <motion.span variants={lineRise} className="inline-block text-white drop-shadow-[0_2px_30px_rgba(0,0,0,0.5)]">
+                  OF CREATIVE
+                </motion.span>
               </span>
             </h1>
 
-            {/* Subtitle */}
-            <p className="text-gray-400 text-lg md:text-xl max-w-xl mb-8 leading-relaxed">
-              Where imagination meets innovation. Crafting digital experiences that transcend boundaries.
-            </p>
+            <motion.p variants={fadeUp} className="mb-9 max-w-xl text-lg leading-relaxed text-white/65 md:text-xl">
+              Where imagination meets innovation. Crafting digital experiences
+              that transcend boundaries.
+            </motion.p>
 
+            <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-4">
+              <a
+                href="#work"
+                className="group inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-black transition-all duration-300 hover:shadow-[0_0_40px_-8px_rgba(255,255,255,0.5)]"
+              >
+                View our work
+                <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </a>
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-400/50 hover:bg-white/10"
+              >
+                Start a project
+              </a>
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {entered && (
+          <motion.button
+            key="mute"
+            onClick={toggleMute}
+            initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.4 }}
+            aria-label={muted ? 'Unmute' : 'Mute'}
+            className="fixed bottom-6 right-6 z-40 grid h-12 w-12 place-items-center rounded-full border border-white/15 bg-black/50 text-white backdrop-blur-md transition-all duration-300 hover:border-cyan-400/50 hover:bg-black/70"
+          >
+            {muted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2">
+        <div className="flex animate-bounce flex-col items-center gap-2">
+          <span className="text-[10px] uppercase tracking-[0.3em] text-white/40">Scroll</span>
+          <div className="flex h-9 w-5 items-start justify-center rounded-full border border-white/25 p-1.5">
+            <div className="h-2 w-1 rounded-full bg-cyan-400" />
           </div>
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="flex flex-col items-center gap-2 animate-bounce">
-          <span className="text-gray-500 text-sm tracking-widest">SCROLL</span>
-          <div className="w-6 h-10 border-2 border-gray-500 rounded-full flex items-start justify-center p-2">
-            <div className="w-1 h-3 bg-cyan-500 rounded-full animate-pulse"></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Grid overlay for depth */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)] pointer-events-none"></div>
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-32 bg-gradient-to-b from-transparent to-black" />
     </section>
   );
 };
 
-export default Hero3DStudio;
+export default Hero;

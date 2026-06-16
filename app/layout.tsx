@@ -1,7 +1,7 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { GeistMono } from "geist/font/mono"
-import { plusJakarta } from "@/lib/fonts"
+import { plusJakarta, spaceGrotesk } from "@/lib/fonts"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { Suspense } from "react"
@@ -25,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans ${plusJakarta.variable}  antialiased`}>
+      <body className={`font-sans ${plusJakarta.variable} ${spaceGrotesk.variable} antialiased`}>
         <ScrollProvider>
           <Suspense fallback={null}>{children}</Suspense>
         </ScrollProvider>

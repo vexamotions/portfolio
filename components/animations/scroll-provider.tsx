@@ -1,67 +1,70 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useEffect, useRef } from "react"
-// In ScrollProvider.tsx, at the top
-import 'lenis/dist/lenis.css'; // Add this import
+import type { ReactNode } from "react";
+import { useEffect } from "react";
+import "lenis/dist/lenis.css";
+import type Lenis from "lenis";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { setActiveLenis } from "@/lib/smooth-scroll";
 
-export default function ScrollProvider({ children }: { children: React.ReactNode }) {
-  const lenisRef = useRef<any>(null)
-
+export default function ScrollProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
-    const initLenis = async () => {
-      const Lenis = (await import("lenis")).default
+    let lenis: Lenis | null = null;
+    let detach = () => {};
 
-      // Initialize Lenis with optimized settings for performance
-      const lenis = new Lenis({
-        duration: 1.2, // Smooth but not too slow
-        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Custom easing for natural feel
+    const init = async () => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        ScrollTrigger.refresh();
+        return;
+      }
+
+      const LenisCtor = (await import("lenis")).default;
+      const instance = new LenisCtor({
+        duration: 1.2,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
         wheelMultiplier: 1,
         touchMultiplier: 2,
-      })
+      });
+      lenis = instance;
+      setActiveLenis(instance);
 
-      lenisRef.current = lenis
+      instance.on("scroll", ScrollTrigger.update);
+      const raf = (time: number) => instance.raf(time * 1000);
+      gsap.ticker.add(raf);
+      gsap.ticker.lagSmoothing(0);
 
-      // Animation loop
-      function raf(time: number) {
-        lenis.raf(time)
-        requestAnimationFrame(raf)
-      }
-      requestAnimationFrame(raf)
-
-      // Handle anchor links with Lenis
-      const handleSmoothScroll = (e: Event) => {
-        const target = e.target as HTMLAnchorElement
+      const handleAnchor = (e: Event) => {
+        const target = e.currentTarget as HTMLAnchorElement;
         if (target.hash) {
-          e.preventDefault()
-          const element = document.querySelector(target.hash)
-          if (element) {
-            lenis.scrollTo(element, { duration: 1.5 })
-          }
+          e.preventDefault();
+          const el = document.querySelector(target.hash);
+          if (el) instance.scrollTo(el as HTMLElement, { duration: 1.5 });
         }
-      }
+      };
+      const links = Array.from(document.querySelectorAll('a[href^="#"]'));
+      links.forEach((link) => link.addEventListener("click", handleAnchor));
 
-      // Add event listeners for smooth scrolling
-      const links = document.querySelectorAll('a[href^="#"]')
-      links.forEach((link) => {
-        link.addEventListener("click", handleSmoothScroll)
-      })
+      detach = () => {
+        links.forEach((link) => link.removeEventListener("click", handleAnchor));
+        gsap.ticker.remove(raf);
+      };
 
-      return () => {
-        links.forEach((link) => {
-          link.removeEventListener("click", handleSmoothScroll)
-        })
-        lenis.destroy()
-      }
-    }
+      ScrollTrigger.refresh();
+    };
 
-    const cleanup = initLenis()
+    init();
 
     return () => {
-      cleanup.then((cleanupFn) => cleanupFn?.())
-    }
-  }, [])
+      detach();
+      lenis?.destroy();
+      setActiveLenis(null);
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
+  }, []);
 
-  return <>{children}</>
+  return <>{children}</>;
 }

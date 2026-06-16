@@ -1,6 +1,5 @@
 import Footer from "@/components/layout/footer";
 import Navbar from "@/components/layout/navbar";
-import { MorphingBlob } from "@/components/MorphingBlob";
 import { ProjectCard } from "@/components/ProjectCard";
 import {
   ALL_PROJECTS,
@@ -10,7 +9,6 @@ import {
 } from "@/lib/projects-data";
 import Link from "next/link";
 
-/* ✅ Required for static export */
 export async function generateStaticParams() {
   return PROJECT_CATEGORIES.map((item) => ({
     category: item.slug,
@@ -66,15 +64,26 @@ export default function CategoryProjectsPage({ params }: CategoryPageProps) {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 gap-x-12 gap-y-20 md:grid-cols-2">
-                {projects.map((project, index) => (
-                  <ProjectCard
-                    key={project.id}
-                    project={project}
-                    index={index}
-                  />
-                ))}
-              </div>
+              {projects.length === 0 ? (
+                <div className="rounded-3xl border border-white/10 bg-white/5 p-12 text-center">
+                  <p className="text-sm uppercase tracking-[0.3em] text-cyan-300/70">
+                    Coming soon
+                  </p>
+                  <p className="mt-3 text-lg text-white/70">
+                    Projects for this category are being added. Check back shortly.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-x-12 gap-y-20 md:grid-cols-2">
+                  {projects.map((project, index) => (
+                    <ProjectCard
+                      key={project.id}
+                      project={project}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              )}
             </>
           )}
         </div>

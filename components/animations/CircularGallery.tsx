@@ -5,11 +5,14 @@ import { useEffect, useRef } from "react"
 
 type GL = Renderer["gl"]
 
-function debounce<T extends (...args: any[]) => void>(func: T, wait: number) {
-    let timeout: number
-    return function (this: any, ...args: Parameters<T>) {
-        window.clearTimeout(timeout)
-        timeout = window.setTimeout(() => func.apply(this, args), wait)
+function debounce<Args extends unknown[]>(
+    func: (...args: Args) => void,
+    wait: number,
+): (...args: Args) => void {
+    let timeout: ReturnType<typeof setTimeout>
+    return (...args: Args) => {
+        clearTimeout(timeout)
+        timeout = setTimeout(() => func(...args), wait)
     }
 }
 
@@ -17,13 +20,15 @@ function lerp(p1: number, p2: number, t: number): number {
     return p1 + (p2 - p1) * t
 }
 
-function autoBind(instance: any): void {
-    const proto = Object.getPrototypeOf(instance)
-    Object.getOwnPropertyNames(proto).forEach((key) => {
-        if (key !== "constructor" && typeof instance[key] === "function") {
-            instance[key] = instance[key].bind(instance)
+function autoBind(instance: object): void {
+    const obj = instance as Record<string, unknown>
+    const proto = Object.getPrototypeOf(instance) as object
+    for (const key of Object.getOwnPropertyNames(proto)) {
+        const value = obj[key]
+        if (key !== "constructor" && typeof value === "function") {
+            obj[key] = (value as (...args: unknown[]) => unknown).bind(instance)
         }
-    })
+    }
 }
 
 function getFontSize(font: string): number {
@@ -250,12 +255,12 @@ class Media {
         uniform sampler2D tMap;
         uniform float uBorderRadius;
         varying vec2 vUv;
-        
+
         float roundedBoxSDF(vec2 p, vec2 b, float r) {
           vec2 d = abs(p) - b;
           return length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - r;
         }
-        
+
         void main() {
           vec2 ratio = vec2(
             min((uPlaneSizes.x / uPlaneSizes.y) / (uImageSizes.x / uImageSizes.y), 1.0),
@@ -266,13 +271,12 @@ class Media {
             vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
           );
           vec4 color = texture2D(tMap, uv);
-          
+
           float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
-          
-          // Smooth antialiasing for edges
+
           float edgeSmooth = 0.002;
           float alpha = 1.0 - smoothstep(-edgeSmooth, edgeSmooth, d);
-          
+
           gl_FragColor = vec4(color.rgb, alpha);
         }
       `,
@@ -395,7 +399,7 @@ class App {
         last: number
         position?: number
     }
-    onCheckDebounce: (...args: any[]) => void
+    onCheckDebounce: () => void
     renderer!: Renderer
     gl!: GL
     camera!: Camera
@@ -499,34 +503,7 @@ class App {
                 image: `https://picsum.photos/seed/5/800/600?grayscale`,
                 text: "Deep Diving",
             },
-            // {
-            //     image: `https://picsum.photos/seed/16/800/600?grayscale`,
-            //     text: "Train Track",
-            // },
-            // {
-            //     image: `https://picsum.photos/seed/17/800/600?grayscale`,
-            //     text: "Santorini",
-            // },
-            // {
-            //     image: `https://picsum.photos/seed/8/800/600?grayscale`,
-            //     text: "Blurry Lights",
-            // },
-            // {
-            //     image: `https://picsum.photos/seed/9/800/600?grayscale`,
-            //     text: "New York",
-            // },
-            // {
-            //     image: `https://picsum.photos/seed/10/800/600?grayscale`,
-            //     text: "Good Boy",
-            // },
-            // {
-            //     image: `https://picsum.photos/seed/21/800/600?grayscale`,
-            //     text: "Coastline",
-            // },
-            // {
-            //     image: `https://picsum.photos/seed/12/800/600?grayscale`,
-            //     text: "Palm Trees",
-            // },
+
         ]
         const galleryItems = items && items.length ? items : defaultItems
         this.mediasImages = galleryItems.concat(galleryItems)
@@ -569,8 +546,8 @@ class App {
     }
 
     onWheel(e: Event) {
-        const wheelEvent = e as WheelEvent
-        const delta = wheelEvent.deltaY || (wheelEvent as any).wheelDelta || (wheelEvent as any).detail
+        const wheelEvent = e as WheelEvent & { wheelDelta?: number }
+        const delta = wheelEvent.deltaY || wheelEvent.wheelDelta || wheelEvent.detail
         this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2
         this.onCheckDebounce()
     }

@@ -1,14 +1,12 @@
 {
   "$schema": "https://unpkg.com/knip@latest/schema.json",
-  "entry": [
-    "next.config.js",
-    "src/pages/**/*.tsx",
-    "src/app/**/*.tsx",
-    "src/components/**/*.tsx",
-    "src/components/*.tsx",
-
-    "src/lib/**/*.ts"
+  "project": [
+    "app/**/*.{ts,tsx}",
+    "components/**/*.{ts,tsx}",
+    "lib/**/*.{ts,tsx}",
+    "types/**/*.{ts,tsx}",
+    "scripts/**/*.ts"
   ],
-  "ignore": ["next-env.d.ts", "postcss.config.js", "tailwind.config.js"],
-  "ignoreDependencies": ["next", "react", "react-dom"]
+  "ignore": ["public/**", "next-env.d.ts"],
+  "ignoreDependencies": ["tailwindcss", "tw-animate-css", "postcss-load-config"]
 }

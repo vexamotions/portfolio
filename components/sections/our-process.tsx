@@ -1,9 +1,8 @@
 "use client"
 
-import { useRef, useState, useEffect } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { useRef, useState, useEffect, type TouchEvent } from "react"
+import { ChevronLeft, ChevronRight, Search, PenTool, Code2, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Search, PenTool, Code2, Send } from "lucide-react"
 import gsap from "gsap"
 import { ProcessCard } from "../process-card"
 
@@ -41,11 +40,11 @@ export function OurProcess() {
     const cardRefs = useRef([])
     const [currentCard, setCurrentCard] = useState(0)
     const [hasDropped, setHasDropped] = useState(false)
-    const [touchStart, setTouchStart] = useState(null)
-    const [touchEnd, setTouchEnd] = useState(null)
+    const [touchStart, setTouchStart] = useState<number | null>(null)
+    const [touchEnd, setTouchEnd] = useState<number | null>(null)
 
     useEffect(() => {
-        // Header animation
+
         gsap.fromTo(
             headerRef.current,
             { opacity: 0, y: -20 },
@@ -58,7 +57,6 @@ export function OurProcess() {
             }
         )
 
-        // Desktop card reveal animation
         const cards = cardRefs.current
         if (window.innerWidth >= 1024) {
             gsap.set(cards, { scale: 0.9, opacity: 0 })
@@ -95,7 +93,7 @@ export function OurProcess() {
     }, [])
 
     useEffect(() => {
-        // Mobile: Trigger drop animation on first view
+
         if (window.innerWidth < 1024 && !hasDropped) {
             const observer = new IntersectionObserver(
                 (entries) => {
@@ -125,15 +123,14 @@ export function OurProcess() {
         setCurrentCard((prev) => (prev - 1 + processSteps.length) % processSteps.length)
     }
 
-    // Swipe detection
     const minSwipeDistance = 50
 
-    const onTouchStart = (e) => {
+    const onTouchStart = (e: TouchEvent) => {
         setTouchEnd(null)
         setTouchStart(e.targetTouches[0].clientX)
     }
 
-    const onTouchMove = (e) => {
+    const onTouchMove = (e: TouchEvent) => {
         setTouchEnd(e.targetTouches[0].clientX)
     }
 
@@ -165,7 +162,6 @@ export function OurProcess() {
                 </p>
             </div>
 
-            {/* Desktop View */}
             <div style={{ willChange: 'transform, opacity' }} className="hidden lg:flex relative w-full max-w-7xl h-[600px] lg:h-[700px] items-start justify-center pt-4">
                 {processSteps.map((step, index) => (
                     <ProcessCard
@@ -178,7 +174,6 @@ export function OurProcess() {
                 ))}
             </div>
 
-            {/* Mobile View - Card Drop then Swipe */}
             <div
                 ref={mobileContainerRef}
                 className="lg:hidden w-full max-w-md relative"
@@ -197,13 +192,12 @@ export function OurProcess() {
                         let zIndex = 0
                         let delay = 0
 
-                        // Initial drop animation
                         if (!hasDropped) {
                             transform = 'translateY(-200%) rotateX(-25deg) scale(0.8)'
                             opacity = 0
-                            delay = index * 150 // Stagger delay
+                            delay = index * 150
                         }
-                        // After drop, card stack behavior
+
                         else {
                             if (isActive) {
                                 transform = 'translateY(0) translateZ(0) rotateX(0deg) scale(1)'
@@ -288,7 +282,6 @@ export function OurProcess() {
                     })}
                 </div>
 
-                {/* Navigation Controls */}
                 <div className="flex items-center justify-center gap-4 mt-8">
                     <Button
                         variant="outline"
@@ -326,7 +319,6 @@ export function OurProcess() {
                     </Button>
                 </div>
 
-                {/* Swipe Hint */}
                 {hasDropped && (
                     <div className="text-center mt-6 text-sm text-muted-foreground">
                         Swipe or use buttons to navigate
@@ -338,25 +330,25 @@ export function OurProcess() {
                 .perspective-1000 {
                     perspective: 1000px;
                 }
-                
+
                 @keyframes shimmer {
                     0%, 100% { transform: translateX(-100%); }
                     50% { transform: translateX(100%); }
                 }
-                
+
                 @keyframes float {
                     0%, 100% { transform: translateY(0px); }
                     50% { transform: translateY(-20px); }
                 }
-                
+
                 .animate-shimmer {
                     animation: shimmer 2s infinite;
                 }
-                
+
                 .animate-float {
                     animation: float 3s ease-in-out infinite;
                 }
-                
+
                 .animate-float-delayed {
                     animation: float 4s ease-in-out infinite 0.5s;
                 }

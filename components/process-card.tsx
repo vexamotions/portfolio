@@ -31,7 +31,6 @@ export const ProcessCard = memo(function ProcessCard({
         const finalY = 320
         const finalRotate = 0
 
-        // Optimize scroll animation
         gsap.fromTo(
             cardRef.current,
             {
@@ -59,24 +58,25 @@ export const ProcessCard = memo(function ProcessCard({
             }
         )
 
-        // Optimize shine effect
-        gsap.to(shineRef.current, {
-            xPercent: ["-100%", "100%"],
-            duration: 2.5,
-            repeat: -1,
-            ease: "none",
-            immediateRender: false
-        })
+        gsap.fromTo(
+            shineRef.current,
+            { xPercent: -100 },
+            {
+                xPercent: 100,
+                duration: 2.5,
+                repeat: -1,
+                ease: "none",
+                immediateRender: false,
+            }
+        )
 
-        // Handle low-performance devices
         const isLowPerformance = window.matchMedia("(prefers-reduced-motion: reduce)").matches
         if (isLowPerformance) {
             gsap.set(cardRef.current, { opacity: 1, scale: 1 })
             gsap.killTweensOf(shineRef.current)
         }
 
-        // Handle window resize
-        let resizeTimeout
+        let resizeTimeout: ReturnType<typeof setTimeout>
         const handleResize = () => {
             clearTimeout(resizeTimeout)
             resizeTimeout = setTimeout(() => {

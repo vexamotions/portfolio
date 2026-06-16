@@ -9,39 +9,13 @@ export default function Footer() {
     <footer className="bg-black border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand */}
+
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-xl font-bold text-white mb-4">{SITE_CONFIG.name}</h3>
             <p className="text-white/60 mb-6 max-w-md">{SITE_CONFIG.description}</p>
-            {/* <div className="flex space-x-4">
-              <Link
-                href={SITE_CONFIG.social.twitter}
-                className="text-white/60 hover:text-white transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter className="h-5 w-5" />
-              </Link>
-              <Link
-                href={SITE_CONFIG.social.instagram}
-                className="text-white/60 hover:text-white transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram className="h-5 w-5" />
-              </Link>
-              <Link
-                href={SITE_CONFIG.social.linkedin}
-                className="text-white/60 hover:text-white transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="h-5 w-5" />
-              </Link>
-              <Link href="#" className="text-white/60 hover:text-white transition-colors" aria-label="GitHub">
-                <Github className="h-5 w-5" />
-              </Link>
-            </div> */}
+
           </div>
 
-          {/* Quick Links */}
           <div>
             <h4 className="text-white font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
@@ -68,7 +42,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact Info */}
           <div>
             <h4 className="text-white font-semibold mb-4">Get In Touch</h4>
             <ul className="space-y-2 text-sm text-white/60">

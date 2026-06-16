@@ -4,7 +4,6 @@ import Footer from "@/components/layout/footer";
 import Navbar from "@/components/layout/navbar";
 import Link from "next/link";
 import Image from "next/image";
-import { MorphingBlob } from "@/components/MorphingBlob";
 import { PROJECT_CATEGORIES } from "@/lib/projects-data";
 
 const AllProjects: React.FC = () => {
