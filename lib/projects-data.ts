@@ -16,7 +16,7 @@ const CATEGORY_COVERS: Record<string, string> = {
   'talking-head': UNSPLASH('1607990281513-2c110a25bd8c'),
   'direct-response-ads': UNSPLASH('1611162617474-5b21e879e113'),
   'ai-ads': UNSPLASH('1677442136019-21780ecad995'),
-  saas: '/videos/portfolio/posters/saas-cover.jpg',
+  saas: UNSPLASH('1551434678-e076c223a692'),
 };
 
 export const PROJECT_CATEGORIES: ProjectCategoryMeta[] = [
@@ -66,7 +66,7 @@ export const PROJECT_CATEGORIES: ProjectCategoryMeta[] = [
     slug: 'saas',
     title: 'SaaS Videos',
     description: 'Product explainers and SaaS promos that make software feel effortless.',
-    cover: '/videos/portfolio/posters/saas-cover.jpg',
+    cover: CATEGORY_COVERS['saas'],
   },
 ];
 
@@ -185,8 +185,8 @@ export const ALL_PROJECTS: Project[] = [
     title: 'Plattr Product Trial',
     description:
       'A crisp SaaS product walkthrough highlighting the core workflow and value in seconds.',
-    thumbnail: '/videos/portfolio/posters/saas-cover.jpg',
-    video: '/videos/portfolio/saas/plattr-trial.mp4',
+    thumbnail: '/placeholder.jpg',
+    youtubeId: 'JgNtDVArcfA',
     category: 'saas',
   },
   {
@@ -194,8 +194,8 @@ export const ALL_PROJECTS: Project[] = [
     title: 'SaaS Explainer Promo',
     description:
       'A punchy explainer that turns a complex software story into a clear, benefit-led pitch.',
-    thumbnail: '/videos/portfolio/posters/saas-cover.jpg',
-    video: '/videos/portfolio/saas/saas-promo-1.mp4',
+    thumbnail: '/placeholder.jpg',
+    youtubeId: '4G86uY_fjrk',
     category: 'saas',
   },
   {
@@ -203,8 +203,8 @@ export const ALL_PROJECTS: Project[] = [
     title: 'SaaS Feature Spotlight',
     description:
       'A short-form product promo built to showcase a standout feature with momentum and polish.',
-    thumbnail: '/videos/portfolio/posters/saas-cover.jpg',
-    video: '/videos/portfolio/saas/saas-promo-2.mp4',
+    thumbnail: '/placeholder.jpg',
+    youtubeId: 'vw8b8gxdy0c',
     category: 'saas',
   },
 
@@ -214,7 +214,7 @@ export const ALL_PROJECTS: Project[] = [
     description:
       'A polished presenter-led welcome video with clean framing, pacing, and brand-forward delivery.',
     thumbnail: '/placeholder.jpg',
-    video: '/videos/portfolio/talking-head/techsuasive-welcome.mp4',
+    youtubeId: 'p25W5-n5yz4',
     category: 'talking-head',
   },
   {
@@ -223,7 +223,7 @@ export const ALL_PROJECTS: Project[] = [
     description:
       'A creator-style intro spot with energetic pacing and confident, on-camera delivery.',
     thumbnail: '/placeholder.jpg',
-    video: '/videos/portfolio/talking-head/dragon-fruit-media.mp4',
+    youtubeId: 'u6TBW--vDV0',
     category: 'talking-head',
   },
   {
@@ -232,7 +232,7 @@ export const ALL_PROJECTS: Project[] = [
     description:
       'A punchy talking-head ad edit with captions, b-roll cutaways, and a strong hook.',
     thumbnail: '/placeholder.jpg',
-    video: '/videos/portfolio/talking-head/marcus-vid-6.mp4',
+    youtubeId: 'nFxpF0zYJx8',
     category: 'talking-head',
   },
   {
@@ -241,7 +241,7 @@ export const ALL_PROJECTS: Project[] = [
     description:
       'A high-fidelity brand feature edit built for premium presentation and storytelling.',
     thumbnail: '/placeholder.jpg',
-    video: '/videos/portfolio/talking-head/final-video-2.mp4',
+    youtubeId: '2xVWEU8X8vY',
     category: 'talking-head',
   },
 
@@ -252,9 +252,9 @@ export const ALL_PROJECTS: Project[] = [
   { id: 24, title: 'Naxir Review Ad', description: 'A review-style ad blending testimonial energy with strong retention beats.', thumbnail: '/placeholder.jpg', youtubeId: 'uVmard41z98', category: 'ai-ads' },
   { id: 25, title: 'Noble View Ad', description: 'A polished brand ad with confident pacing and a benefit-led message.', thumbnail: '/placeholder.jpg', youtubeId: 'NBv849EfaRQ', category: 'ai-ads' },
 
-  { id: 26, title: 'Direct Response Ad 01', description: 'A conversion-focused ad creative engineered for performance.', thumbnail: '/placeholder.jpg', video: '/videos/portfolio/direct-response-ads/dr-1.mp4', category: 'direct-response-ads' },
-  { id: 27, title: 'Direct Response Ad 02', description: 'A conversion-focused ad creative engineered for performance.', thumbnail: '/placeholder.jpg', video: '/videos/portfolio/direct-response-ads/dr-2.mp4', category: 'direct-response-ads' },
-  { id: 28, title: 'Direct Response Ad 03', description: 'A conversion-focused ad creative engineered for performance.', thumbnail: '/placeholder.jpg', video: '/videos/portfolio/direct-response-ads/dr-3.mp4', category: 'direct-response-ads' },
+  { id: 26, title: 'Direct Response Ad 01', description: 'A conversion-focused ad creative engineered for performance.', thumbnail: '/placeholder.jpg', category: 'direct-response-ads' },
+  { id: 27, title: 'Direct Response Ad 02', description: 'A conversion-focused ad creative engineered for performance.', thumbnail: '/placeholder.jpg', youtubeId: 'dPiXqbYBxVA', category: 'direct-response-ads' },
+  { id: 28, title: 'Direct Response Ad 03', description: 'A conversion-focused ad creative engineered for performance.', thumbnail: '/placeholder.jpg', youtubeId: 's4watldb3Js', category: 'direct-response-ads' },
   { id: 29, title: 'Direct Response Ad 04', description: 'A conversion-focused ad creative engineered for performance.', thumbnail: '/placeholder.jpg', youtubeId: 'b8LRtV_99nQ', category: 'direct-response-ads' },
   { id: 30, title: 'Direct Response Ad 05', description: 'A conversion-focused ad creative engineered for performance.', thumbnail: '/placeholder.jpg', youtubeId: 'egmXfvvtQY4', category: 'direct-response-ads' },
   { id: 31, title: 'Direct Response Ad 06', description: 'A conversion-focused ad creative engineered for performance.', thumbnail: '/placeholder.jpg', youtubeId: 'mhfogJRhmE0', category: 'direct-response-ads' },

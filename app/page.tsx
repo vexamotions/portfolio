@@ -10,8 +10,11 @@ import Capabilities from "@/components/sections/capabilities";
 import ScrollDraw from "@/components/sections/scroll-draw";
 import ServicesSection from "@/components/sections/ServiceSection";
 import EnhancedCTAButton from "@/components/EnhancedCTAButton";
+import { getProjects } from "@/lib/sanity";
 
-export default function Home() {
+export default async function Home() {
+  const projects = await getProjects();
+
   return (
     <>
       <Navbar />
@@ -19,7 +22,7 @@ export default function Home() {
         <Hero />
         <RobotJourney />
         <EnhancedCTAButton />
-        <FeaturedWork />
+        <FeaturedWork projects={projects} />
         <MarqueeBand />
         <ScrollDraw />
         <Capabilities />

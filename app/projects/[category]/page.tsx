@@ -1,18 +1,12 @@
 import Footer from "@/components/layout/footer";
 import Navbar from "@/components/layout/navbar";
 import { ProjectCard } from "@/components/ProjectCard";
-import {
-  ALL_PROJECTS,
-  PROJECT_CATEGORIES,
-  PROJECT_CATEGORY_TITLE_MAP,
-  type ProjectCategorySlug,
-} from "@/lib/projects-data";
+import { getCategories, getProjectsByCategory } from "@/lib/sanity";
 import Link from "next/link";
 
 export async function generateStaticParams() {
-  return PROJECT_CATEGORIES.map((item) => ({
-    category: item.slug,
-  }));
+  const categories = await getCategories();
+  return categories.map((item) => ({ category: item.slug }));
 }
 
 interface CategoryPageProps {
@@ -21,17 +15,13 @@ interface CategoryPageProps {
   };
 }
 
-export default function CategoryProjectsPage({ params }: CategoryPageProps) {
-  const category = params.category as ProjectCategorySlug;
-  const isValidCategory = category in PROJECT_CATEGORY_TITLE_MAP;
+export default async function CategoryProjectsPage({ params }: CategoryPageProps) {
+  const { category } = params;
+  const categories = await getCategories();
+  const categoryMeta = categories.find((item) => item.slug === category);
+  const isValidCategory = Boolean(categoryMeta);
 
-  const categoryMeta = PROJECT_CATEGORIES.find(
-    (item) => item.slug === category,
-  );
-
-  const projects = ALL_PROJECTS.filter(
-    (project) => project.category === category,
-  );
+  const projects = await getProjectsByCategory(category);
 
   return (
     <>

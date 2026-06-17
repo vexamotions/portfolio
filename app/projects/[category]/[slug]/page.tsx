@@ -3,19 +3,17 @@ import Navbar from "@/components/layout/navbar";
 import { ProjectCard } from "@/components/ProjectCard";
 import { ProjectPlayer } from "@/app/projects/_components/project-player";
 import {
-  ALL_PROJECTS,
   PROJECT_CATEGORY_TITLE_MAP,
-  findProject,
-  getProjectsByCategory,
   projectSlug,
   projectThumbnail,
-  type ProjectCategorySlug,
 } from "@/lib/projects-data";
+import { getProjects, findProject, getProjectsByCategory } from "@/lib/sanity";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export function generateStaticParams() {
-  return ALL_PROJECTS.map((project) => ({
+export async function generateStaticParams() {
+  const projects = await getProjects();
+  return projects.map((project) => ({
     category: project.category,
     slug: projectSlug(project),
   }));
@@ -28,18 +26,17 @@ interface ProjectPageProps {
   };
 }
 
-export default function ProjectDetailPage({ params }: ProjectPageProps) {
-  const project = findProject(params.category, params.slug);
+export default async function ProjectDetailPage({ params }: ProjectPageProps) {
+  const project = await findProject(params.category, params.slug);
 
   if (!project) {
     notFound();
   }
 
   const categoryTitle =
-    PROJECT_CATEGORY_TITLE_MAP[project.category as ProjectCategorySlug] ??
-    "Projects";
+    PROJECT_CATEGORY_TITLE_MAP[project.category] ?? "Projects";
 
-  const related = getProjectsByCategory(project.category)
+  const related = (await getProjectsByCategory(project.category))
     .filter((p) => p.id !== project.id)
     .slice(0, 4);
 

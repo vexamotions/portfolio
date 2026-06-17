@@ -6,11 +6,7 @@ import Link from "next/link";
 import Hls from "hls.js";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import {
-  ALL_PROJECTS,
-  PROJECT_CATEGORY_TITLE_MAP,
-  projectSlug,
-} from "@/lib/projects-data";
+import { PROJECT_CATEGORY_TITLE_MAP, projectSlug } from "@/lib/projects-data";
 import type { Project } from "@/types/types";
 import { cn } from "@/lib/utils";
 
@@ -20,13 +16,6 @@ const FEATURED_IDS_AND_LAYOUT: { id: number; span: string }[] = [
   { id: 1, span: "" },
   { id: 9, span: "" },
 ];
-
-const FEATURED: { project: Project; span: string }[] = FEATURED_IDS_AND_LAYOUT
-  .map(({ id, span }) => {
-    const project = ALL_PROJECTS.find((p) => p.id === id);
-    return project ? { project, span } : null;
-  })
-  .filter(Boolean) as { project: Project; span: string }[];
 
 const STATS = [
   { value: "150+", label: "Projects delivered" },
@@ -133,7 +122,14 @@ function FeaturedCard({ project, span }: { project: Project; span: string }) {
   );
 }
 
-export default function FeaturedWork() {
+export default function FeaturedWork({ projects }: { projects: Project[] }) {
+  const featured = FEATURED_IDS_AND_LAYOUT
+    .map(({ id, span }) => {
+      const project = projects.find((p) => p.id === id);
+      return project ? { project, span } : null;
+    })
+    .filter((entry): entry is { project: Project; span: string } => entry !== null);
+
   return (
     <section id="work" className="relative overflow-hidden bg-black py-24 md:py-32">
 
@@ -175,7 +171,7 @@ export default function FeaturedWork() {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:h-[82vh] lg:grid-cols-4 lg:grid-rows-2 lg:gap-6"
         >
-          {FEATURED.map(({ project, span }) => (
+          {featured.map(({ project, span }) => (
             <FeaturedCard key={project.id} project={project} span={span} />
           ))}
         </motion.div>

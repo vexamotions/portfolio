@@ -1,12 +1,12 @@
-"use client";
-
 import Footer from "@/components/layout/footer";
 import Navbar from "@/components/layout/navbar";
 import Link from "next/link";
 import Image from "next/image";
-import { PROJECT_CATEGORIES } from "@/lib/projects-data";
+import { getCategories } from "@/lib/sanity";
 
-const AllProjects: React.FC = () => {
+export default async function AllProjects() {
+  const categories = await getCategories();
+
   return (
     <>
       <Navbar />
@@ -26,7 +26,7 @@ const AllProjects: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            {PROJECT_CATEGORIES.map((category) => (
+            {categories.map((category) => (
               <Link
                 key={category.slug}
                 href={`/projects/${category.slug}`}
@@ -60,6 +60,4 @@ const AllProjects: React.FC = () => {
       <Footer />
     </>
   );
-};
-
-export default AllProjects;
+}

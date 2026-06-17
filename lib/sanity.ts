@@ -7,6 +7,7 @@ export const sanity = createClient({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
   apiVersion: "2024-01-01",
   useCdn: false,
+  token: process.env.SANITY_API_TOKEN,
 });
 
 const CATEGORY_QUERY = `*[_type=="category"]|order(order asc){
